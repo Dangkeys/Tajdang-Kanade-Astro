@@ -11,7 +11,7 @@
         "Kanade",
         "personal blog",
         "Sudoria",
-        "frontend development"
+        "frontend development" 
       ],
       "ja": ["Astro", "Kanade", "個人ブログ", "Sudoria", "フロントエンド開発"]
     }
@@ -19,14 +19,14 @@
   "author": {
     "name": {
       "zh-CN": "苏多莉亚",
-      "en": "Sudoria",
+      "en": "Tajdang",
       "ja": "スドリア"
     },
     "handle": "Sudoria",
     "avatar": "/images/sudoria.jpg",
     "github": "https://github.com/sudoriaa"
   },
-  "hero": { "image": "/images/hero.webp" },
+  "hero": { "image": "/images/l-hero.png" },
   "navigation": [
     { "label": "nav.home", "icon": "icon-[bx--bxs-home-circle]", "url": "/" },
     {
