@@ -23,6 +23,8 @@ const index = computed(() => slides.value[physicalIndex.value]?.original ?? 0);
 const dragging = ref(false);
 const th = props.lang === "th";
 const hovered = ref(false);
+let inView = false;
+let visibilityObserver: IntersectionObserver | undefined;
 let pointerActive = false;
 let suppressClick = false;
 let lastInteraction = 0;
@@ -165,10 +167,15 @@ onMounted(async () => {
         goToPhysical(cycleStart.value + index.value, true);
     });
     resizeObserver.observe(track.value);
+    visibilityObserver = new IntersectionObserver(([entry]) => {
+      inView = entry?.isIntersecting ?? false;
+    });
+    visibilityObserver.observe(track.value);
   }
   if (props.items.length < 2) return;
   autoTimer = setInterval(() => {
     if (
+      !inView ||
       document.hidden ||
       hovered.value ||
       pointerActive ||
@@ -185,6 +192,7 @@ onUnmounted(() => {
   clearInterval(autoTimer);
   clearTimeout(settleTimer);
   resizeObserver?.disconnect();
+  visibilityObserver?.disconnect();
 });
 </script>
 <template>
@@ -243,6 +251,7 @@ onUnmounted(() => {
             :src="slide.item.src"
             :alt="slide.item.alt"
             loading="lazy"
+            decoding="async"
             draggable="false"
           />
           <video

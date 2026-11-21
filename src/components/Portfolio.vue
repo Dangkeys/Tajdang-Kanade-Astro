@@ -1,16 +1,35 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from "vue";
+import { computed, onMounted, ref, useId, nextTick } from "vue";
 import { translator, homePath, type Language } from "../i18n";
 import type { PostSummary } from "../lib/posts";
 import { personalInfo } from "../config";
 import PostCover from "./posts/PostCover.vue";
 import TagTree from "./TagTree.vue";
 import { buildTagTree, matchesTag, tagBreadcrumb, tagLabel } from "../lib/tags";
-const props = defineProps<{ posts: PostSummary[]; lang: Language }>();
+const props = defineProps<{
+  posts: PostSummary[];
+  lang: Language;
+  avatarSrc: string;
+  portraitSrc: string;
+}>();
 const t = translator(props.lang);
 const home = homePath(props.lang);
 const th = props.lang === "th";
 const query = ref("");
+const searchFocused = ref(false);
+const activeSuggestion = ref(-1);
+const suggestionList = ref<HTMLElement>();
+const suggestionListId = `${useId()}-suggestions`;
+type Suggestion =
+  | { kind: "post"; label: string; detail: string; href: string; key: string }
+  | { kind: "tag"; label: string; detail: string; path: string; key: string }
+  | {
+      kind: "category";
+      label: string;
+      detail: string;
+      category: string;
+      key: string;
+    };
 const category = ref("");
 const selectedTags = ref<string[]>([]);
 const tagMatch = ref<"any" | "all">("any");
@@ -52,6 +71,12 @@ const labels = {
   "work-experience": t("category.work-experience"),
   activities: t("category.activities"),
 };
+const categoryIcons = {
+  personal: "icon-[lucide--coffee]",
+  projects: "icon-[lucide--code-xml]",
+  "work-experience": "icon-[lucide--briefcase-business]",
+  activities: "icon-[lucide--trophy]",
+};
 const categoryPosts = computed(() =>
   props.posts.filter(
     (post) => !category.value || post.category === category.value,
@@ -72,6 +97,105 @@ const filtered = computed(() =>
         .includes(query.value.trim().toLowerCase()),
   ),
 );
+const suggestions = computed<Suggestion[]>(() => {
+  const needle = query.value.trim().toLowerCase();
+  const posts: Suggestion[] = categoryPosts.value
+    .filter((post) =>
+      `${post.title} ${post.description} ${post.tags.join(" ")}`
+        .toLowerCase()
+        .includes(needle),
+    )
+    .slice(0, 4)
+    .map((post) => ({
+      kind: "post",
+      label: post.title,
+      detail: `${th ? "บทความ" : "Post"} · ${categoryTitle(post.category)}`,
+      href: `${home}posts/${post.id}/`,
+      key: `post:${post.id}`,
+    }));
+  const categories: Suggestion[] = groups
+    .filter((group) => labels[group].toLowerCase().includes(needle))
+    .map((group) => ({
+      kind: "category",
+      label: labels[group],
+      detail: th ? "หมวดหมู่" : "Category",
+      category: group,
+      key: `category:${group}`,
+    }));
+  const paths = new Set<string>();
+  categoryPosts.value.forEach((post) =>
+    post.tags.forEach((path) => {
+      const segments = path.split("/");
+      segments.forEach((_, index) =>
+        paths.add(segments.slice(0, index + 1).join("/")),
+      );
+    }),
+  );
+  const tags: Suggestion[] = [...paths]
+    .filter(
+      (path) =>
+        path.toLowerCase().includes(needle) &&
+        !selectedTags.value.includes(path),
+    )
+    .map((path) => ({
+      kind: "tag",
+      label: tagBreadcrumb(path),
+      detail: th ? "แท็ก" : "Tag",
+      path,
+      key: `tag:${path}`,
+    }));
+  return [...posts, ...categories, ...tags].slice(0, 8);
+});
+const showSuggestions = computed(() => searchFocused.value);
+function closeSuggestions() {
+  searchFocused.value = false;
+  activeSuggestion.value = -1;
+}
+function searchFocusOut(event: FocusEvent) {
+  if (
+    event.currentTarget instanceof Node &&
+    event.relatedTarget instanceof Node &&
+    event.currentTarget.contains(event.relatedTarget)
+  )
+    return;
+  closeSuggestions();
+}
+function updateSearch() {
+  searchFocused.value = true;
+  activeSuggestion.value = -1;
+  sync();
+}
+function moveSuggestion(direction: number) {
+  searchFocused.value = true;
+  const length = suggestions.value.length;
+  if (!length) return;
+  activeSuggestion.value =
+    activeSuggestion.value < 0
+      ? direction > 0
+        ? 0
+        : length - 1
+      : (activeSuggestion.value + direction + length) % length;
+  nextTick(() =>
+    suggestionList.value
+      ?.querySelectorAll<HTMLElement>("[role='option']")
+      [activeSuggestion.value]?.scrollIntoView({ block: "nearest" }),
+  );
+}
+function activateSuggestion() {
+  if (!showSuggestions.value) return;
+  const position = activeSuggestion.value < 0 ? 0 : activeSuggestion.value;
+  suggestionList.value
+    ?.querySelectorAll<HTMLElement>("[role='option']")
+    [position]?.click();
+}
+function applySuggestion(suggestion: Suggestion) {
+  query.value = "";
+  if (suggestion.kind === "tag") {
+    selectedTags.value = [...new Set([...selectedTags.value, suggestion.path])];
+    sync();
+  } else if (suggestion.kind === "category") choose(suggestion.category);
+  closeSuggestions();
+}
 function categoryTitle(value: string) {
   const group = groups.find((group) => group === value);
   return group ? labels[group] : value;
@@ -127,7 +251,7 @@ onMounted(() => readUrl());
           class="avatar-link"
           :href="`${home}posts/about-me/`"
           :aria-label="th ? 'รู้จัก Tajdang' : 'About Tajdang'"
-          ><img :src="personalInfo.avatar" alt="Tajdang" width="88" height="88"
+          ><img :src="avatarSrc" alt="Tajdang" width="88" height="88"
         /></a>
         <h2>Tajdang<span class="accent">.</span></h2>
         <p class="role">{{ t("author.role") }}</p>
@@ -169,19 +293,126 @@ onMounted(() => readUrl());
           }}
         </p>
       </div>
-      <label class="portfolio-search card"
-        ><span class="icon-[lucide--search]" aria-hidden="true"></span
-        ><input
-          v-model="query"
-          @input="sync"
-          type="search"
-          :aria-label="th ? 'ค้นหาผลงาน' : 'Search my work'"
-          :placeholder="
-            th
-              ? 'ค้นหาโปรเจกต์ ทักษะ หรือเรื่องที่สนใจ…'
-              : 'Search projects, skills, or a topic…'
-          "
-      /></label>
+      <div class="search-area" @focusout="searchFocusOut">
+        <label class="portfolio-search card"
+          ><span
+            class="search-symbol icon-[lucide--search]"
+            aria-hidden="true"
+          ></span
+          ><input
+            v-model="query"
+            @input="updateSearch"
+            @focus="searchFocused = true"
+            @click="searchFocused = true"
+            @keydown.down.prevent="moveSuggestion(1)"
+            @keydown.up.prevent="moveSuggestion(-1)"
+            @keydown.enter.prevent="activateSuggestion"
+            @keydown.esc.stop.prevent="closeSuggestions"
+            type="search"
+            role="combobox"
+            aria-autocomplete="list"
+            :aria-expanded="showSuggestions"
+            :aria-controls="suggestionListId"
+            :aria-activedescendant="
+              activeSuggestion >= 0 && showSuggestions
+                ? `${suggestionListId}-${activeSuggestion}`
+                : undefined
+            "
+            :aria-label="th ? 'ค้นหาผลงาน' : 'Search my work'"
+            :placeholder="
+              th
+                ? 'ค้นหาโปรเจกต์ ทักษะ หรือเรื่องที่สนใจ…'
+                : 'Search projects, skills, or a topic…'
+            "
+        /></label>
+        <Transition name="suggestions"
+          ><div
+            v-if="showSuggestions"
+            :id="suggestionListId"
+            ref="suggestionList"
+            class="search-suggestions card"
+            role="listbox"
+            :aria-label="th ? 'คำแนะนำการค้นหา' : 'Search suggestions'"
+          >
+            <p class="suggestion-heading">
+              {{
+                query.trim()
+                  ? th
+                    ? "ผลการค้นหาและแท็กที่เกี่ยวข้อง"
+                    : "Matching posts & topics"
+                  : th
+                    ? "ลองสำรวจหัวข้อเหล่านี้"
+                    : "Explore something"
+              }}
+            </p>
+            <template
+              v-for="(suggestion, position) in suggestions"
+              :key="suggestion.key"
+            >
+              <a
+                v-if="suggestion.kind === 'post'"
+                :id="`${suggestionListId}-${position}`"
+                :href="suggestion.href"
+                role="option"
+                :aria-selected="activeSuggestion === position"
+                tabindex="-1"
+                class="suggestion-item"
+                :class="{ highlighted: activeSuggestion === position }"
+                @pointerenter="activeSuggestion = position"
+                @click="closeSuggestions"
+                ><span
+                  class="suggestion-icon icon-[lucide--file-text]"
+                  aria-hidden="true"
+                ></span
+                ><span class="suggestion-copy"
+                  ><span>{{ suggestion.label }}</span
+                  ><small>{{ suggestion.detail }}</small></span
+                ></a
+              >
+              <button
+                v-else
+                :id="`${suggestionListId}-${position}`"
+                type="button"
+                role="option"
+                :aria-selected="activeSuggestion === position"
+                tabindex="-1"
+                class="suggestion-item"
+                :class="{ highlighted: activeSuggestion === position }"
+                @pointerenter="activeSuggestion = position"
+                @click="applySuggestion(suggestion)"
+              >
+                <span
+                  class="suggestion-icon"
+                  :class="
+                    suggestion.kind === 'tag'
+                      ? 'icon-[lucide--tags]'
+                      : 'icon-[lucide--folder-open]'
+                  "
+                  aria-hidden="true"
+                ></span
+                ><span class="suggestion-copy"
+                  ><span>{{ suggestion.label }}</span
+                  ><small>{{ suggestion.detail }}</small></span
+                >
+              </button>
+            </template>
+            <p v-if="!suggestions.length" class="suggestion-empty">
+              {{
+                th
+                  ? "ยังไม่พบ ลองค้นหาด้วยคำอื่นได้ครับ"
+                  : "Nothing yet—try another word."
+              }}
+            </p>
+            <p class="suggestion-footer">
+              {{
+                th
+                  ? "↑ ↓ เพื่อเลือก · Enter เพื่อเปิด · Esc เพื่อปิด"
+                  : "↑ ↓ to choose · Enter to open · Esc to close"
+              }}
+            </p>
+          </div></Transition
+        >
+      </div>
       <div
         class="portfolio-filters"
         :aria-label="th ? 'หมวดหมู่' : 'Categories'"
@@ -191,7 +422,13 @@ onMounted(() => readUrl());
           :aria-pressed="!category"
           @click="choose('')"
         >
-          {{ th ? "ทั้งหมด" : "Everything" }}</button
+          <span
+            class="category-icon icon-[lucide--layers]"
+            aria-hidden="true"
+          ></span
+          ><span class="category-label">{{
+            th ? "ทั้งหมด" : "Everything"
+          }}</span></button
         ><button
           v-for="group in groups"
           :key="group"
@@ -199,7 +436,12 @@ onMounted(() => readUrl());
           :aria-pressed="category === group"
           @click="choose(group)"
         >
-          {{ labels[group] }}
+          <span
+            class="category-icon"
+            :class="categoryIcons[group]"
+            aria-hidden="true"
+          ></span
+          ><span class="category-label">{{ labels[group] }}</span>
         </button>
       </div>
       <details
@@ -348,7 +590,7 @@ onMounted(() => readUrl());
           :aria-label="th ? 'รู้จัก Tajdang' : 'About Tajdang'"
         >
           <img
-            src="/images/taj-portrait.png"
+            :src="portraitSrc"
             :alt="th ? 'ภาพถ่ายของ Tajdang' : 'Portrait of Tajdang'"
             width="1108"
             height="1477"
@@ -402,7 +644,13 @@ onMounted(() => readUrl());
             type="button"
             @click="nextQuote"
             :aria-label="th ? 'อ่านข้อคิดถัดไป' : 'Show another thought'"
-          ></button>
+            :title="th ? 'อ่านข้อคิดถัดไป' : 'Show another thought'"
+          >
+            <span
+              class="quote-action icon-[lucide--refresh-cw]"
+              aria-hidden="true"
+            ></span>
+          </button>
         </section>
       </div>
     </aside>
@@ -620,10 +868,10 @@ onMounted(() => readUrl());
     order: 0;
   }
   .portfolio-work {
-    order: 1;
+    order: 2;
   }
   .portfolio-right {
-    order: 2;
+    order: 1;
     display: grid;
     grid-template-columns: 1fr 1fr;
     align-items: start;
@@ -749,8 +997,16 @@ onMounted(() => readUrl());
   .portfolio-grid {
     grid-template-columns: 220px minmax(0, 1fr);
   }
+  .portfolio-profile {
+    grid-row: 1 / span 2;
+  }
+  .portfolio-work {
+    grid-column: 2;
+    grid-row: 2;
+  }
   .portfolio-right {
     grid-column: 2;
+    grid-row: 1;
     display: grid;
     grid-template-columns: 1fr 1fr;
     align-items: start;
@@ -1018,13 +1274,13 @@ onMounted(() => readUrl());
   overflow: hidden;
   isolation: isolate;
   transition:
-    transform 0.35s ease,
-    box-shadow 0.35s ease;
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
 }
 .quote-shell:hover .quote-card,
 .quote-card:has(.quote-trigger:focus-visible) {
-  transform: translateY(-4px) rotate(-3deg);
-  box-shadow: var(--shadow);
+  border-color: var(--accent);
+  box-shadow: 0 5px 20px color-mix(in srgb, var(--accent) 12%, transparent);
 }
 .quote-mark {
   display: inline-block;
@@ -1076,22 +1332,22 @@ onMounted(() => readUrl());
 }
 .quote-enter-from {
   opacity: 0;
-  transform: translateY(22px) rotate(3deg) scale(0.94);
+  transform: translateY(22px) scale(0.94);
   filter: blur(5px);
 }
 .quote-leave-to {
   opacity: 0;
-  transform: translateY(-15px) rotate(-3deg) scale(0.97);
+  transform: translateY(-15px) scale(0.97);
   filter: blur(4px);
 }
 @keyframes quote-mark-pop {
   from {
     opacity: 0;
-    transform: rotate(-20deg) scale(0.65);
+    transform: scale(0.65);
   }
   to {
     opacity: 1;
-    transform: rotate(0) scale(1);
+    transform: scale(1);
   }
 }
 @keyframes quote-spark {
@@ -1105,7 +1361,7 @@ onMounted(() => readUrl());
   }
   to {
     opacity: 0.7;
-    transform: rotate(0) scale(1);
+    transform: scale(1);
   }
 }
 @keyframes quote-ripple {
@@ -1154,5 +1410,228 @@ onMounted(() => readUrl());
     grid-template-columns: repeat(2, 38px);
     justify-content: center;
   }
+}
+</style>
+
+<style scoped>
+.search-area {
+  position: relative;
+  z-index: 10;
+}
+.portfolio-search {
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
+}
+.search-symbol {
+  flex-shrink: 0;
+  font-size: 20px;
+  transition: transform 0.25s;
+}
+.search-area:focus-within .search-symbol {
+  transform: rotate(-12deg) scale(1.12);
+}
+.search-suggestions {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  padding: 8px;
+  max-height: min(420px, 55dvh);
+  overflow-y: auto;
+  box-shadow: 0 12px 32px #00000018;
+}
+.suggestion-heading {
+  margin: 8px 10px 10px;
+  color: var(--muted);
+  font-size: 12px;
+}
+.suggestion-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 11px 12px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--text);
+  text-align: left;
+}
+.suggestion-item.highlighted,
+.suggestion-item:hover {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+.suggestion-icon {
+  flex-shrink: 0;
+  font-size: 19px;
+  color: var(--accent);
+  transition: transform 0.2s;
+}
+.suggestion-item:hover .suggestion-icon,
+.suggestion-item.highlighted .suggestion-icon {
+  transform: rotate(-8deg) scale(1.1);
+}
+.suggestion-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  font-size: 14px;
+}
+.suggestion-copy small {
+  font-size: 11px;
+  color: var(--muted);
+}
+.suggestion-footer {
+  margin: 8px 10px 4px;
+  padding-top: 9px;
+  border-top: 1px solid var(--line);
+  font-size: 11px;
+  color: var(--muted);
+}
+.suggestion-empty {
+  margin: 18px 12px;
+  font-size: 14px;
+  color: var(--muted);
+}
+.suggestions-enter-active,
+.suggestions-leave-active {
+  transition:
+    opacity 0.18s ease,
+    transform 0.18s ease;
+}
+.suggestions-enter-from,
+.suggestions-leave-to {
+  opacity: 0;
+  transform: translateY(-8px);
+}
+.portfolio-filters button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  overflow: hidden;
+  transition:
+    color 0.22s,
+    background 0.22s,
+    border-color 0.22s,
+    box-shadow 0.22s;
+}
+.portfolio-filters button::after {
+  content: "";
+  position: absolute;
+  height: 2px;
+  left: 12px;
+  right: 12px;
+  bottom: 3px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.25s;
+  opacity: 0.6;
+}
+.portfolio-filters button:hover,
+.portfolio-filters button:focus-visible {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-soft);
+  box-shadow: 0 3px 10px color-mix(in srgb, var(--accent) 12%, transparent);
+}
+.portfolio-filters button.selected:hover,
+.portfolio-filters button.selected:focus-visible {
+  color: var(--on-accent);
+  background: var(--accent);
+}
+.portfolio-filters button:hover::after,
+.portfolio-filters button:focus-visible::after {
+  transform: scaleX(1);
+}
+.category-icon {
+  display: inline-block;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+.portfolio-filters button:hover .category-icon,
+.portfolio-filters button:focus-visible .category-icon {
+  animation: category-wiggle 0.8s ease-in-out infinite alternate;
+}
+.category-label {
+  transition: transform 0.2s;
+}
+.portfolio-filters button:hover .category-label {
+  transform: translateY(-1px);
+}
+.portfolio-filters button:active .category-icon {
+  transform: scale(0.85);
+}
+@keyframes category-wiggle {
+  from {
+    transform: translateY(1px) rotate(-8deg);
+  }
+  to {
+    transform: translateY(-2px) rotate(8deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .search-symbol,
+  .suggestion-icon,
+  .suggestions-enter-active,
+  .suggestions-leave-active,
+  .portfolio-filters button,
+  .portfolio-filters button::after,
+  .category-label {
+    transition: none;
+  }
+  .portfolio-filters button:hover .category-icon,
+  .portfolio-filters button:focus-visible .category-icon {
+    animation: none;
+  }
+  .search-area:focus-within .search-symbol,
+  .suggestion-item:hover .suggestion-icon,
+  .suggestion-item.highlighted .suggestion-icon,
+  .portfolio-filters button:hover .category-label {
+    transform: none;
+  }
+}
+</style>
+
+<style scoped>
+.quote-action {
+  position: absolute;
+  right: 18px;
+  bottom: 18px;
+  font-size: 18px;
+  color: var(--accent);
+  opacity: 0.6;
+  transition:
+    opacity 0.2s,
+    transform 0.45s;
+}
+.quote-shell:hover .quote-action,
+.quote-trigger:focus-visible .quote-action {
+  opacity: 1;
+  transform: rotate(180deg);
+}
+.quote-trigger:active .quote-action {
+  transform: rotate(180deg) scale(0.85);
+}
+@media (prefers-reduced-motion: reduce) {
+  .quote-action {
+    transition: none;
+  }
+  .quote-shell:hover .quote-action,
+  .quote-trigger:focus-visible .quote-action,
+  .quote-trigger:active .quote-action {
+    transform: none;
+  }
+}
+</style>
+
+<style scoped>
+.portfolio-work,
+.portfolio-profile,
+.portfolio-right {
+  min-width: 0;
 }
 </style>

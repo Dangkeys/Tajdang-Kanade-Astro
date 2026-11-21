@@ -39,7 +39,7 @@ export function attachHeroTrail(hero: HTMLElement): () => void {
   function draw(now: number) {
     frame = undefined;
     context.clearRect(0, 0, width, height);
-    if (reducedMotion.matches) {
+    if (reducedMotion.matches || hero.hasAttribute("data-effects-paused")) {
       sparks = [];
       return;
     }
@@ -77,7 +77,8 @@ export function attachHeroTrail(hero: HTMLElement): () => void {
     if (
       event.pointerType !== "mouse" ||
       reducedMotion.matches ||
-      !finePointer.matches
+      !finePointer.matches ||
+      hero.hasAttribute("data-effects-paused")
     )
       return;
     const bounds = hero.getBoundingClientRect();

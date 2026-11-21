@@ -1,4 +1,6 @@
 ---
+import { optimizedImageUrl } from "../lib/images";
+import { personalInfo } from "../config";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import Portfolio from "./Portfolio.vue";
 import { getPosts, summarize } from "../lib/posts";
@@ -8,8 +10,18 @@ interface Props {
 }
 const { lang = "en" } = Astro.props;
 const posts = (await getPosts(lang)).map(summarize);
+const [avatarSrc, portraitSrc] = await Promise.all([
+  optimizedImageUrl(personalInfo.avatar, 176),
+  optimizedImageUrl("/images/taj-portrait.png", 480),
+]);
 ---
 
 <BaseLayout home lang={lang}>
-  <Portfolio posts={posts} lang={lang} client:load />
+  <Portfolio
+    posts={posts}
+    lang={lang}
+    avatarSrc={avatarSrc}
+    portraitSrc={portraitSrc}
+    client:load
+  />
 </BaseLayout>

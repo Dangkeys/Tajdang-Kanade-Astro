@@ -22,6 +22,7 @@ const {
   lang = "en",
   title,
   home = false,
+  article = false,
   noindex = false,
   description,
   heroTitle,
@@ -107,6 +108,7 @@ const alternate =
     </div>
     <Welcome
       compact={!home}
+      headingLevel={article ? 2 : 1}
       title={heroTitle || t("hero.title")}
       subtitle={heroSubtitle || t("hero.subtitle")}
       lang={lang}
