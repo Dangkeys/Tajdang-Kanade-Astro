@@ -478,15 +478,25 @@ test("SEO metadata, official sitemap, and RSS consistency", async ({
 });
 
 test("Covers follow the dark theme", async ({ page }) => {
+  await page.emulateMedia({ colorScheme: "light" });
   await page.goto("/");
   await expect(page.locator(".post-feed")).toHaveAttribute(
     "data-ready",
     "true",
   );
   const cover = page.locator(".post-cover").first();
-  await expect(cover).toHaveCSS("filter", "none");
+  const lightBackground = await cover.evaluate(
+    (element) => getComputedStyle(element).backgroundColor,
+  );
+  const lightText = await cover.evaluate(
+    (element) => getComputedStyle(element).color,
+  );
   await page.getByRole("button", { name: t("nav.dark") }).click();
-  await expect(cover).toHaveCSS("filter", "brightness(0.75) saturate(0.8)");
+  await expect(cover).not.toHaveCSS("background-color", lightBackground);
+  await expect(cover).not.toHaveCSS("color", lightText);
+  await page.getByRole("button", { name: t("nav.light") }).click();
+  await expect(cover).toHaveCSS("background-color", lightBackground);
+  await expect(cover).toHaveCSS("color", lightText);
 });
 
 test("Reading all posts without JavaScript", async ({ browser, baseURL }) => {

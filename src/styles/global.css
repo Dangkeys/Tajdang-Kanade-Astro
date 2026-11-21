@@ -3,14 +3,14 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
-  --color-kanadeLight: #fff1f1;
-  --color-kanadeDark: #111520;
-  --color-kanadeBoxLight: #fff;
-  --color-kanadeBoxDark: #202534;
-  --color-subBoxLight: #ffe8eb;
-  --color-subTextLight: #ee8ca2;
-  --color-subBoxDark: #343044;
-  --color-subTextDark: #eeb0c2;
+  --color-kanadeLight: #faf3e8;
+  --color-kanadeDark: #241e2e;
+  --color-kanadeBoxLight: #fffaf2;
+  --color-kanadeBoxDark: #302737;
+  --color-subBoxLight: #f5dfd6;
+  --color-subTextLight: #a54142;
+  --color-subBoxDark: #49303c;
+  --color-subTextDark: #ed9b88;
   --font-Oxanium-Medium: "Oxanium-Medium", var(--font-body);
 }
 @font-face {
@@ -34,14 +34,20 @@
   --font-code:
     "JetBrains Mono Variable", "Noto Sans SC Variable", "Noto Sans JP Variable",
     monospace;
-  --bg: #fff1f1;
-  --card: #fff;
-  --text: #4c4551;
-  --muted: #938791;
-  --accent: #d85d7e;
-  --accent-soft: #fff0f4;
-  --line: #f3e9ed;
-  --shadow: 0 5px 24px #88566a06;
+  --bg: var(--color-kanadeLight);
+  --card: var(--color-kanadeBoxLight);
+  --text: #2b2235;
+  --muted: #77636b;
+  --accent: var(--color-subTextLight);
+  --accent-soft: var(--color-subBoxLight);
+  --on-accent: #fffaf2;
+  --gold: #7f5e2b;
+  --gold-soft: #f2e5c6;
+  --plum: #70516e;
+  --plum-soft: #ece2e9;
+  --hero-highlight: #efdbad;
+  --line: #ead7c8;
+  --shadow: 0 5px 24px #2b223509;
   color-scheme: light;
 }
 :root:lang(en) {
@@ -58,13 +64,18 @@
     sans-serif;
 }
 :root.dark {
-  --bg: #111520;
-  --card: #202534;
-  --text: #e4deeb;
-  --muted: #aaa2b9;
-  --accent: #f0a2bc;
-  --accent-soft: #343044;
-  --line: #343646;
+  --bg: var(--color-kanadeDark);
+  --card: var(--color-kanadeBoxDark);
+  --text: #f5e8d4;
+  --muted: #c5adb0;
+  --accent: var(--color-subTextDark);
+  --accent-soft: var(--color-subBoxDark);
+  --on-accent: #2b2235;
+  --gold: #e5c88f;
+  --gold-soft: #44392f;
+  --plum: #d3b1cb;
+  --plum-soft: #413246;
+  --line: #503d49;
   --shadow: 0 5px 24px #00000012;
   color-scheme: dark;
 }
@@ -132,15 +143,15 @@ button:disabled {
   outline-offset: 4px;
 }
 ::selection {
-  background: #f6c8d6;
-  color: #593546;
+  background: var(--accent);
+  color: var(--on-accent);
 }
 ::-webkit-scrollbar {
   width: 7px;
   height: 7px;
 }
 ::-webkit-scrollbar-thumb {
-  background: #eeb3c4;
+  background: var(--accent);
   border-radius: 8px;
 }
 .skip-link {
@@ -221,7 +232,7 @@ button:disabled {
 }
 a.chip:hover {
   background: var(--accent);
-  color: var(--card);
+  color: var(--on-accent);
 }
 .btn {
   display: inline-flex;
@@ -232,7 +243,7 @@ a.chip:hover {
   border: 1px solid transparent;
   border-radius: 10px;
   background: var(--accent);
-  color: #fff;
+  color: var(--on-accent);
   line-height: 1.5;
 }
 .btn:hover {
@@ -331,7 +342,7 @@ a.chip:hover {
   color: var(--accent);
   display: grid;
   place-items: center;
-  box-shadow: 0 4px 16px #a56b8112;
+  box-shadow: var(--shadow);
 }
 .back-top[hidden] {
   display: none;

@@ -487,8 +487,8 @@ function tilt(id: string) {
   width: 91px;
   height: 91px;
   flex-shrink: 0;
-  border: 1px dashed #db9baf;
-  outline: 1px solid #e8c2cd80;
+  border: 1px dashed var(--accent);
+  outline: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
   outline-offset: 5px;
   border-radius: 50%;
   color: var(--accent);
@@ -898,7 +898,10 @@ textarea.paper-input {
 .wall-canvas {
   min-height: 630px;
   padding: 37px 27px 22px;
-  background-image: radial-gradient(#c9acb33d 0.9px, transparent 0.9px);
+  background-image: radial-gradient(
+    color-mix(in srgb, var(--accent) 20%, transparent) 0.9px,
+    transparent 0.9px
+  );
   background-size: 17px 17px;
 }
 .note-grid {
@@ -1082,7 +1085,7 @@ textarea.paper-input {
   min-height: 241px;
   padding: 20px 12px;
   background: transparent;
-  border: 1px dashed #d9b5c1;
+  border: 1px dashed var(--line);
   border-radius: 4px;
   color: var(--muted);
   transform: rotate(-1deg);
@@ -1111,7 +1114,7 @@ textarea.paper-input {
   bottom: 22px;
   left: 24px;
   font: 35px var(--font-body);
-  color: #ce9ead;
+  color: var(--accent);
   transform: rotate(-25deg);
   opacity: 0.7;
 }

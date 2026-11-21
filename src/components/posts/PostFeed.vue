@@ -293,7 +293,7 @@ onUnmounted(() => window.removeEventListener("popstate", readUrl));
   white-space: nowrap;
 }
 .feed-tabs button.selected {
-  color: #fff;
+  color: var(--on-accent);
   background: var(--accent);
 }
 .feed-tabs button:not(.selected):hover {
@@ -326,7 +326,7 @@ onUnmounted(() => window.removeEventListener("popstate", readUrl));
 }
 .post-card:hover {
   transform: translateY(-3px);
-  box-shadow: 0 8px 25px #98566a10;
+  box-shadow: var(--shadow);
 }
 .cover-link {
   display: block;
@@ -440,7 +440,7 @@ onUnmounted(() => window.removeEventListener("popstate", readUrl));
 .pagination button.current {
   background: var(--accent);
   border-color: var(--accent);
-  color: white;
+  color: var(--on-accent);
 }
 .pagination > span {
   font-size: 11px;
@@ -459,7 +459,7 @@ onUnmounted(() => window.removeEventListener("popstate", readUrl));
 .feed-end > span {
   width: 28px;
   height: 1px;
-  background: #e6c8d2;
+  background: var(--line);
 }
 .archive-intro {
   padding: 25px;

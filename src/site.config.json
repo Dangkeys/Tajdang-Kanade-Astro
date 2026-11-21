@@ -23,10 +23,10 @@
       "ja": "スドリア"
     },
     "handle": "Sudoria",
-    "avatar": "/images/sudoria.jpg",
+    "avatar": "/images/tajdang-avatar.png",
     "github": "https://github.com/sudoriaa"
   },
-  "hero": { "image": "/images/l-hero.png" },
+  "hero": { "image": "/images/L.png" },
   "navigation": [
     { "label": "nav.home", "icon": "icon-[bx--bxs-home-circle]", "url": "/" },
     {

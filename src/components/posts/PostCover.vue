@@ -69,8 +69,8 @@ const labels: Record<string, { icon: string; title: string; sub: string }> = {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  color: #79539c;
-  background: #eee6f7;
+  color: var(--plum);
+  background: var(--plum-soft);
   padding: 28px 12px;
   isolation: isolate;
 }
@@ -146,34 +146,31 @@ small {
   opacity: 0.5;
 }
 .css {
-  background: #fbe4e5;
-  color: #b76f85;
+  background: var(--accent-soft);
+  color: var(--accent);
 }
 .vue,
 .life {
-  background: #e2efe7;
-  color: #588f7a;
+  background: var(--gold-soft);
+  color: var(--gold);
 }
 .notes {
-  background: #f1e5d9;
-  color: #a88969;
+  background: var(--gold-soft);
+  color: var(--gold);
 }
 .typescript {
-  background: #dfebf7;
-  color: #648db2;
+  background: var(--plum-soft);
+  color: var(--plum);
 }
 .git {
-  background: #fae7df;
-  color: #bc7e68;
+  background: var(--accent-soft);
+  color: var(--accent);
 }
 .design {
-  background: #e5e6fa;
-  color: #8283b5;
+  background: var(--plum-soft);
+  color: var(--plum);
 }
 .featured {
-  background: #e9e1f4;
-}
-:global(.dark .post-cover) {
-  filter: brightness(0.75) saturate(0.8);
+  background: var(--plum-soft);
 }
 </style>
