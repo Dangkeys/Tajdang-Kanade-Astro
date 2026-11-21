@@ -3,7 +3,7 @@ title: "รู้จักผม"
 description: "เรียนวิศวกรรมคอมพิวเตอร์ที่ลาดกระบัง ทำ Backend, Mobile, เกม และ Homelab"
 date: 2026-11-21
 lang: th
-category: personal
+category: blogs
 cover: notes
 tags: []
 featured: false
@@ -20,7 +20,7 @@ media:
 
 ## สวัสดีครับ ผม Tajdang
 
-ผมชื่อธรรศนะ เรียก Tajdang ก็ได้ครับ เรียนวิศวกรรมคอมพิวเตอร์ที่ลาดกระบัง และทำงานเป็น Presales Network Engineer
+ผมชื่อธรรศนะครับ หรือเรียกTajdangก็ได้ครับ  ตอนนี้้ผมศึกษาอยู่ที่วิศวกรรมคอมพิวเตอร์ที่ลาดกระบัง และทำงานเป็น Presales Network Engineer
 
 เคยทำ Backend กับแอปมือถือให้ [Advisory](../advisory/), [HoraHub](../horahub/), [Essentia และ PetNMed](../freelance-work/) อีกฝั่งก็ทำเกมด้วย Unity และเคยช่วยจัด session พัฒนาเกมที่ [SAIG](../saig/)
 

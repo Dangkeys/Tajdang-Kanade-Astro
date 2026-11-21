@@ -55,20 +55,15 @@ const currentQuote = computed(() => {
 function nextQuote() {
   quoteIndex.value = (quoteIndex.value + 1) % quotes.length;
 }
-const groups = [
-  "personal",
-  "projects",
-  "work-experience",
-  "activities",
-] as const;
+const groups = ["blogs", "projects", "work-experience", "activities"] as const;
 const labels = {
-  personal: t("category.personal"),
+  blogs: t("category.blogs"),
   projects: t("category.projects"),
   "work-experience": t("category.work-experience"),
   activities: t("category.activities"),
 };
 const categoryIcons = {
-  personal: "icon-[lucide--coffee]",
+  blogs: "icon-[lucide--coffee]",
   projects: "icon-[lucide--code-xml]",
   "work-experience": "icon-[lucide--briefcase-business]",
   activities: "icon-[lucide--trophy]",
@@ -254,8 +249,9 @@ function readUrl() {
   query.value = params.get("q") || "";
   tagMatch.value = params.get("match") === "all" ? "all" : "any";
   const requestedCategory = params.get("category") || "";
-  category.value =
-    requestedCategory === "skills" ? "personal" : requestedCategory;
+  category.value = ["skills", "personal"].includes(requestedCategory)
+    ? "blogs"
+    : requestedCategory;
   selectedTags.value = [...new Set(params.getAll("tag"))];
   const requestedPage = Number(params.get("page"));
   page.value =

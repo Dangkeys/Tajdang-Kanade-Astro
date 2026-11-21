@@ -3,7 +3,7 @@ export const categoryNames = [
   "projects",
   "work-experience",
   "activities",
-  "personal",
+  "blogs",
 ] as const;
 export type Category = (typeof categoryNames)[number];
 export const categoryLabel = (category: string) =>

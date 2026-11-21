@@ -3,7 +3,7 @@ title: "นอกเวลางาน"
 description: "Homelab หมากรุก ยิม และอ่านหนังสือ"
 date: "2026-11-21"
 lang: "th"
-category: "personal"
+category: "blogs"
 cover: "life"
 tags: ["Personal/Chess", "Personal/Gym", "Personal/Reading", "Infrastructure/Homelab"]
 featured: false

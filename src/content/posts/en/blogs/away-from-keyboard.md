@@ -3,7 +3,7 @@ title: "Outside work"
 description: "Homelab, chess, gym, and reading."
 date: "2026-11-21"
 lang: "en"
-category: "personal"
+category: "blogs"
 cover: "life"
 tags: ["Personal/Chess", "Personal/Gym", "Personal/Reading", "Infrastructure/Homelab"]
 featured: false

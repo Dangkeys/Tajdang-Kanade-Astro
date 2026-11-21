@@ -3,7 +3,7 @@ title: "About me"
 description: "Computer Engineering student at KMITL. Backend, mobile, games, and homelab."
 date: 2026-11-21
 lang: en
-category: personal
+category: blogs
 cover: notes
 tags: []
 featured: false
@@ -20,7 +20,7 @@ media:
 
 ## Hi, I’m Tajdang
 
-I’m Taj Dangkomen, a Computer Engineering student at KMITL and a Presales Network Engineer.
+I’m Taj Dangkomen, a 4th yearComputer Engineering student at KMITL and a Presales Network Engineer.
 
 I’ve worked on backend and mobile apps: [Advisory](../advisory/), [HoraHub](../horahub/), [Essentia and PetNMed](../freelance-work/). I also make games with Unity and helped run game-development sessions at [SAIG](../saig/).
 
