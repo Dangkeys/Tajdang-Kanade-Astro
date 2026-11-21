@@ -1,6 +1,9 @@
 ---
 title: "About me"
 description: "Computer Engineering student at KMITL. Backend, mobile, games, and homelab."
+mediaText:
+  media-1:
+    alt: "Tajdang's illustrated avatar"
 ---
 
 ## Hi, I’m Tajdang

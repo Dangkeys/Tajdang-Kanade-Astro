@@ -32,21 +32,14 @@ const tagMatch = ref<"any" | "all">("any");
 const quoteIndex = ref(0);
 const quotes = [
   {
-    en: "Keep learning. Keep building. One small step at a time.",
-    th: "ค่อย ๆ เรียนรู้ แล้วลงมือทำทีละอย่าง",
+    en: "Never stop learning, because life never stop teaching",
+    th: "Never stop learning, because life never stop teaching",
   },
   {
-    en: "Understand the problem before reaching for a tool.",
-    th: "เข้าใจปัญหาให้ชัด ก่อนเลือกเครื่องมือ",
+    en: "The more I learn, the more I realize how much I don't know",
+    th: "The more I learn, the more I realize how much I don't know",
   },
-  {
-    en: "A small thing that works is a good place to start.",
-    th: "เริ่มจากสิ่งเล็ก ๆ ที่ใช้งานได้จริง",
-  },
-  {
-    en: "Stay curious about the things you use every day.",
-    th: "อย่าหยุดสงสัยในสิ่งที่ใช้ทุกวัน",
-  },
+
 ];
 const currentQuote = computed(() => {
   const quote = quotes[quoteIndex.value % quotes.length];
@@ -305,8 +298,8 @@ onMounted(() => readUrl());
         <p class="muted">
           {{
             th
-              ? "งานที่เคยทำ โปรเจกต์ที่กำลังลอง และเรื่องนอกจอของผม"
-              : "Software, games, homelab experiments, and life away from the keyboard."
+              ? "ผมทําอะไรบ้างกันนะะ "
+              : "Things I did."
           }}
         </p>
       </div>
@@ -692,7 +685,7 @@ onMounted(() => readUrl());
             >
           </div>
           <span class="eyebrow">{{
-            th ? "เตือนใจตัวเอง" : "A NOTE TO MYSELF"
+            th ? "A NOTE TO MYSELF" : "A NOTE TO MYSELF"
           }}</span>
           <button
             class="quote-trigger"

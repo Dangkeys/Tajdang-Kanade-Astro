@@ -3,7 +3,7 @@
   "site": {
     "name": "Tajdang",
     "logoText": "Tajdang",
-    "favicon": "/favicon.svg",
+    "favicon": "/images/tajdang-avatar.svg",
     "keywords": {
       "en": ["Tajdang", "Infrastructure", "Portfolio"],
       "th": ["Tajdang", "โครงสร้างพื้นฐาน", "ผลงาน"]
