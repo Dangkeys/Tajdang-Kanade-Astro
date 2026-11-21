@@ -7,7 +7,7 @@ description: "Work, internships, freelance projects, and SAIG."
 
 I joined SAIG and became a Game Session Leader, helping coordinate sessions and support other members.
 
-[SAIG game sessions](../../activities/saig/en.md)
+SAIG game sessions
 
 ## May to July 2024: PetNMed
 
@@ -25,10 +25,12 @@ PetNMed and Essentia
 
 I worked on an Expo / React Native consultation app during my internship associated with BKBIET in Pilani, India.
 
-[BKBIET internship](../bkbiet-internship/en.md)
+BKBIET internship
 
 ## September 2025: HoraHub
 
 I started backend work on HoraHub with NestJS, PostgreSQL, and Socket.io.
 
 HoraHub
+
+*Cover diagram: [Pro Git, Scott Chacon and Ben Straub](https://git-scm.com/book/en/v2/Git-Branching-Branches-in-a-Nutshell), [CC BY-NC-SA 3.0](https://creativecommons.org/licenses/by-nc-sa/3.0/).*

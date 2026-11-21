@@ -1,0 +1,84 @@
+---
+import type { Language } from "../i18n";
+interface Props {
+  name: string;
+  lang: Language;
+  items: { title: string; href: string; episode: number; current: boolean }[];
+}
+const { name, lang, items } = Astro.props;
+---
+
+<nav
+  class="series-nav"
+  aria-label={lang === "th" ? `ซีรีส์ ${name}` : `${name} series`}
+>
+  <p class="series-label">{lang === "th" ? "ซีรีส์" : "Series"}</p>
+  <h2>{name}</h2>
+  <ol>
+    {items.map((item) => (
+      <li>
+        <a href={item.href} aria-current={item.current ? "page" : undefined}>
+          <small>
+            {lang === "th" ? "ตอนที่" : "Episode"} {item.episode}
+          </small>
+          <span>{item.title.replace(/^EP\.?\s*\d+[\s:—-]*/i, "")}</span>
+        </a>
+      </li>
+    ))}
+  </ol>
+  <p class="series-coming">
+    {lang === "th" ? "ตอนต่อไปจะตามมาครับ" : "More episodes are coming."}
+  </p>
+</nav>
+
+<style>
+  .series-nav {
+    padding: 20px;
+  }
+  .series-label {
+    color: var(--muted);
+    font-size: 12px;
+    margin: 0 0 3px;
+  }
+  .series-nav h2 {
+    margin: 0 0 18px;
+    font-size: 20px;
+  }
+  .series-nav ol {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .series-nav li + li {
+    margin-top: 8px;
+  }
+  .series-nav a {
+    display: grid;
+    gap: 4px;
+    padding: 12px;
+    border-left: 2px solid transparent;
+    border-radius: 0 8px 8px 0;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+  .series-nav a small {
+    color: var(--muted);
+    font-size: 12px;
+  }
+  .series-nav a[aria-current="page"] {
+    background: var(--accent-soft);
+    color: var(--accent);
+    border-color: var(--accent);
+  }
+  .series-nav a:hover,
+  .series-nav a:focus-visible {
+    background: var(--accent-soft);
+    color: var(--accent);
+  }
+  .series-coming {
+    margin: 18px 0 0;
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+</style>

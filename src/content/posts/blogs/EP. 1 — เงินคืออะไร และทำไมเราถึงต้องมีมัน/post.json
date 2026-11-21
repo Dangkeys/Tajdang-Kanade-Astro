@@ -2,7 +2,7 @@
   "date": "2026-11-21",
   "category": "blogs",
   "tags": [
-    "Bitcoin/Part 1",
+    "Bitcoin",
     "Money/History",
     "Money/Inflation",
     "Money/Banking",
@@ -11,5 +11,11 @@
   ],
   "cover": "notes",
   "featured": false,
-  "slug": "ep-1--เงินคืออะไร-และทำไมเราถึงต้องมีมัน"
+  "slug": "ep-1--เงินคืออะไร-และทำไมเราถึงต้องมีมัน",
+  "coverImage": "/images/bitcoin-standard.jpg",
+  "coverFit": "contain",
+  "series": {
+    "name": "Bitcoin",
+    "episode": 1
+  }
 }

@@ -14,6 +14,8 @@ export type PostSummary = {
   tags: string[];
   cover: string;
   coverImage?: string;
+  coverFit?: "cover" | "contain";
+  series?: { name: string; episode: number };
   featured: boolean;
   minutes: number;
 };

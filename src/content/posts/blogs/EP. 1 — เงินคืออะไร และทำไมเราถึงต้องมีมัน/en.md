@@ -114,3 +114,5 @@ World War I began in 1914, followed by the major economic crisis of 1929 and Wor
 How did it happen? Why do governments and central banks play such a large role in the money we use? And how does that connect to the questions at the start: why does money lose purchasing power, and why do we keep being told to invest?
 
 That's what I'd like to talk about next time.
+
+*Cover: [The Bitcoin Standard, Saifedean Ammous, Wiley](https://www.wiley-vch.de/en/areas-interest/finance-economics-law/the-bitcoin-standard-978-1-119-47386-2).*

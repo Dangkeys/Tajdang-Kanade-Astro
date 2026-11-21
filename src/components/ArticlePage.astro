@@ -3,6 +3,8 @@ import { getCollection, render, type CollectionEntry } from "astro:content";
 import { tagBreadcrumb } from "../lib/tags";
 import { optimizedImageUrl } from "../lib/images";
 import ArticleContents from "./ArticleContents.astro";
+import SeriesNavigation from "./SeriesNavigation.astro";
+import { getPostId } from "../lib/post-paths";
 import MediaCarousel from "./MediaCarousel.vue";
 import PostConnections from "./PostConnections.astro";
 import { getPostConnections } from "../lib/post-links";
@@ -16,9 +18,29 @@ const { post, lang } = Astro.props;
 const t = translator(lang);
 const { Content, headings } = await render(post);
 const tocHeadings = headings.filter((heading) => heading.depth <= 3);
+const allPosts = await getCollection("posts");
+const series = post.data.series;
+const seriesItems = series
+  ? allPosts
+      .filter(
+        (entry) =>
+          !entry.data.draft &&
+          entry.data.lang === lang &&
+          entry.data.series?.name === series.name,
+      )
+      .sort(
+        (a, b) => (a.data.series?.episode ?? 0) - (b.data.series?.episode ?? 0),
+      )
+      .map((entry) => ({
+        title: entry.data.title,
+        href: `${homePath(lang)}posts/${getPostId(entry).split("/").map(encodeURIComponent).join("/")}/`,
+        episode: entry.data.series?.episode ?? 1,
+        current: entry.id === post.id,
+      }))
+  : [];
 const { outgoing, backlinks } = getPostConnections({
   post,
-  posts: await getCollection("posts"),
+  posts: allPosts,
   site: Astro.site ?? Astro.url,
 });
 const media = await Promise.all(
@@ -38,7 +60,28 @@ const media = await Promise.all(
   lang={lang}
   article
 >
-  <div class="shell reading-shell">
+  <div class:list={["shell reading-shell", { "has-series": Boolean(series) }]}>
+    {series && (
+      <>
+        <aside class="card series-sidebar">
+          <SeriesNavigation
+            name={series.name}
+            lang={lang}
+            items={seriesItems}
+          />
+        </aside>
+        <details class="card series-mobile">
+          <summary>
+            {series.name} · {lang === "th" ? "ตอนทั้งหมด" : "All episodes"}
+          </summary>
+          <SeriesNavigation
+            name={series.name}
+            lang={lang}
+            items={seriesItems}
+          />
+        </details>
+      </>
+    )}
     <details class="card mobile-article-nav">
       <summary>
         <span class="icon-[lucide--list]" aria-hidden="true"></span>
@@ -107,6 +150,38 @@ const media = await Promise.all(
   }
   .portfolio-article {
     padding: clamp(24px, 5vw, 56px);
+  }
+  .reading-shell.has-series {
+    max-width: 1480px;
+    grid-template-columns: 220px minmax(0, 1fr) 240px;
+  }
+  .series-sidebar {
+    position: sticky;
+    top: 24px;
+    max-height: calc(100dvh - 48px);
+    overflow-y: auto;
+  }
+  .series-mobile {
+    display: none;
+  }
+  .series-mobile summary {
+    padding: 12px 18px;
+    color: var(--accent);
+    cursor: pointer;
+  }
+  @media (max-width: 1200px) {
+    .reading-shell.has-series {
+      max-width: 1200px;
+      grid-template-columns: minmax(0, 1fr) 240px;
+    }
+    .series-sidebar {
+      display: none;
+    }
+    .series-mobile {
+      display: block;
+      grid-column: 1 / -1;
+      width: 100%;
+    }
   }
   .article-heading {
     margin: 28px 0;

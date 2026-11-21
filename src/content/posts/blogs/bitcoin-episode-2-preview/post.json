@@ -1,0 +1,17 @@
+{
+  "date": "2026-11-21",
+  "category": "blogs",
+  "tags": [
+    "Bitcoin"
+  ],
+  "cover": "notes",
+  "coverImage": "/images/bitcoin-standard.jpg",
+  "coverFit": "contain",
+  "featured": false,
+  "draft": false,
+  "slug": "bitcoin-episode-2-preview",
+  "series": {
+    "name": "Bitcoin",
+    "episode": 2
+  }
+}

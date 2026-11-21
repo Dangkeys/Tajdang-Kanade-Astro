@@ -1,5 +1,5 @@
 <script setup lang="ts">
-defineProps<{ image?: string; kind?: string }>();
+defineProps<{ image?: string; kind?: string; fit?: "cover" | "contain" }>();
 const icons: Record<string, string> = {
   astro: "icon-[simple-icons--astro]",
   vue: "icon-[simple-icons--vuedotjs]",
@@ -15,7 +15,10 @@ const icons: Record<string, string> = {
 <template>
   <div
     class="post-cover"
-    :class="{ 'logo-cover': image?.split(/[?#]/)[0]?.endsWith('.svg') }"
+    :class="{
+      'logo-cover': image?.split(/[?#]/)[0]?.endsWith('.svg'),
+      'contained-cover': fit === 'contain',
+    }"
     aria-hidden="true"
   >
     <img v-if="image" :src="image" alt="" loading="lazy" decoding="async" />
@@ -55,5 +58,11 @@ const icons: Record<string, string> = {
 .logo-cover img {
   object-fit: contain;
   padding: 16px;
+}
+.contained-cover {
+  background: #fff;
+}
+.contained-cover img {
+  object-fit: contain;
 }
 </style>

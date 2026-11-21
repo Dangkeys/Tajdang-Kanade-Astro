@@ -51,6 +51,14 @@ const sharedPostSchema = z
     ),
     cover: z.enum(coverNames),
     coverImage: source.optional(),
+    coverFit: z.enum(["cover", "contain"]).default("cover"),
+    series: z
+      .object({
+        name: z.string().trim().min(1),
+        episode: z.number().int().positive(),
+      })
+      .strict()
+      .optional(),
     featured: z.boolean().default(false),
     draft: z.boolean().default(false),
     media: z.array(sharedMediaSchema).default([]),

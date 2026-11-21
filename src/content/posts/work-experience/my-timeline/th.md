@@ -57,3 +57,5 @@ description: "รวมกิจกรรม การฝึกงาน แล�
 ไว้มีอะไรใหม่ ๆ เดี๋ยวมาอัปเดตครับ 55555+
 
 — Tajdang
+
+*แผนภาพหน้าปก: [Pro Git โดย Scott Chacon และ Ben Straub](https://git-scm.com/book/en/v2/Git-Branching-Branches-in-a-Nutshell), [CC BY-NC-SA 3.0](https://creativecommons.org/licenses/by-nc-sa/3.0/)*

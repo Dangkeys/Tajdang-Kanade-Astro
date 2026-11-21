@@ -2,6 +2,7 @@
 import { computed, onMounted, ref, useId, nextTick, watch } from "vue";
 import { translator, homePath, type Language } from "../i18n";
 import type { PostSummary } from "../lib/posts";
+import { groupSeries } from "../lib/series";
 import { personalInfo } from "../config";
 import PostCover from "./posts/PostCover.vue";
 import TagTree from "./TagTree.vue";
@@ -39,7 +40,6 @@ const quotes = [
     en: "The more I learn, the more I realize how much I don't know",
     th: "The more I learn, the more I realize how much I don't know",
   },
-
 ];
 const currentQuote = computed(() => {
   const quote = quotes[quoteIndex.value % quotes.length];
@@ -81,12 +81,13 @@ const filtered = computed(() =>
         .includes(query.value.trim().toLowerCase()),
   ),
 );
+const feedEntries = computed(() => groupSeries(filtered.value));
 const pageCount = computed(() =>
-  Math.max(1, Math.ceil(filtered.value.length / pageSize)),
+  Math.max(1, Math.ceil(feedEntries.value.length / pageSize)),
 );
 const currentPage = computed(() => Math.min(page.value, pageCount.value));
 const displayed = computed(() =>
-  filtered.value.slice(
+  feedEntries.value.slice(
     (currentPage.value - 1) * pageSize,
     currentPage.value * pageSize,
   ),
@@ -296,11 +297,7 @@ onMounted(() => readUrl());
           {{ th ? "ช่วงนี้ผมทำอะไรบ้าง" : "What I’m up to" }}
         </h2>
         <p class="muted">
-          {{
-            th
-              ? "ผมทําอะไรบ้างกันนะะ "
-              : "Things I did."
-          }}
+          {{ th ? "ผมทําอะไรบ้างกันนะะ " : "Things I did." }}
         </p>
       </div>
       <div class="search-area" @focusout="searchFocusOut">
@@ -554,7 +551,10 @@ onMounted(() => readUrl());
             :aria-label="post.title"
             class="post-tile"
             :class="post.category"
-            ><PostCover :image="post.coverImage" :kind="post.cover"
+            ><PostCover
+              :image="post.coverImage"
+              :kind="post.cover"
+              :fit="post.coverFit"
           /></a>
           <div class="post-copy">
             <div class="post-kicker">
@@ -562,6 +562,9 @@ onMounted(() => readUrl());
                 ><span class="icon-[lucide--star]" aria-hidden="true"></span
                 >{{ th ? "ปักหมุด" : "Pinned" }}</span
               ><span class="eyebrow">{{ categoryTitle(post.category) }}</span>
+              <span v-if="post.series" class="series-badge">{{
+                th ? "ซีรีส์" : "Series"
+              }}</span>
             </div>
             <h3>
               <a :href="`${home}posts/${post.id}/`">{{ post.title }}</a>
@@ -585,17 +588,17 @@ onMounted(() => readUrl());
         <div v-if="!filtered.length" key="empty" class="card empty-state">
           <span class="icon-[lucide--sprout]" aria-hidden="true"></span>
           <h3>
-            {{ th ? "ไม่เจอโพสต์ที่ตรงกับตัวกรอง" : "No matching posts" }}
+            {{ th ? "ตรงนี้ยังไม่มีโพสต์ครับ" : "Nothing here yet" }}
           </h3>
           <p>
             {{
               th
-                ? "ลองเปลี่ยนคำค้นหาหรือล้างตัวกรองครับ"
-                : "Try a different search or clear the filters."
+                ? "ผมกำลังทยอยเพิ่มโพสต์ครับ ลองเปลี่ยนหมวดหมู่หรือแท็ก หรือล้างตัวกรองเพื่อดูโพสต์ที่มีอยู่"
+                : "I'm adding posts a little at a time. Try changing the category or tags, or clear the filters to see what's available."
             }}
           </p>
           <button class="btn secondary" @click="reset">
-            {{ th ? "ดูทั้งหมด" : "Show everything" }}
+            {{ th ? "ล้างตัวกรอง" : "Clear filters" }}
           </button>
         </div>
       </TransitionGroup>
@@ -1713,6 +1716,13 @@ onMounted(() => readUrl());
   padding-top: 10px;
   border-top: 1px solid var(--line);
   color: var(--muted);
+  font-size: 12px;
+}
+</style>
+
+<style scoped>
+.series-badge {
+  color: var(--accent);
   font-size: 12px;
 }
 </style>

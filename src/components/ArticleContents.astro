@@ -29,10 +29,16 @@ const baseDepth = headings.length
       {lang === "th" ? "ในบทความนี้" : "On this page"}
     </h2>
   )}
-  <ol>
+  <ol class="toc-headings">
     {headings.map((heading) => (
-      <li style={`padding-inline-start: ${(heading.depth - baseDepth) * 12}px`}>
-        <a href={`#${heading.slug}`}>{heading.text}</a>
+      <li data-depth={heading.depth - baseDepth}>
+        <a
+          href={`#${heading.slug}`}
+          data-heading-link
+          style={`padding-inline-start: ${12 + (heading.depth - baseDepth) * 12}px`}
+        >
+          {heading.text}
+        </a>
       </li>
     ))}
   </ol>
@@ -100,6 +106,27 @@ const baseDepth = headings.length
   .article-toc a:focus-visible {
     color: var(--accent);
   }
+  .toc-headings {
+    border-left: 1px solid var(--line);
+  }
+  .toc-headings a {
+    padding-right: 8px;
+    border-left: 2px solid transparent;
+    margin-left: -1px;
+    border-radius: 0 6px 6px 0;
+    transition:
+      background-color 0.15s,
+      color 0.15s;
+  }
+  .toc-headings li[data-depth="1"] {
+    font-size: 13px;
+  }
+  .toc-headings a[aria-current="location"] {
+    color: var(--accent);
+    border-left-color: var(--accent);
+    background: var(--accent-soft);
+    font-weight: 600;
+  }
   .toc-backlinks {
     border-top: 1px solid var(--line);
     margin-top: 18px;
@@ -141,3 +168,48 @@ const baseDepth = headings.length
     margin-left: 6px;
   }
 </style>
+
+<script>
+  document.addEventListener("astro:page-load", () => {
+    const headings = [
+      ...document.querySelectorAll<HTMLElement>(
+        "#article-body :is(h1,h2,h3)[id]",
+      ),
+    ];
+    const links = [
+      ...document.querySelectorAll<HTMLAnchorElement>("[data-heading-link]"),
+    ];
+    if (!headings.length || !links.length) return;
+    function highlight(id: string) {
+      for (const link of links) {
+        if (link.getAttribute("href") === `#${id}`)
+          link.setAttribute("aria-current", "location");
+        else link.removeAttribute("aria-current");
+      }
+    }
+    const update = () => {
+      const current =
+        headings
+          .filter((heading) => heading.getBoundingClientRect().top <= 125)
+          .at(-1) ?? headings[0];
+      if (current) highlight(current.id);
+    };
+    const observer = new IntersectionObserver(update, {
+      rootMargin: "-90px 0px -60% 0px",
+    });
+    headings.forEach((heading) => observer.observe(heading));
+    links.forEach((link) =>
+      link.addEventListener("click", () =>
+        highlight(
+          link.hash.slice(1) ? decodeURIComponent(link.hash.slice(1)) : "",
+        ),
+      ),
+    );
+    update();
+    document.addEventListener(
+      "astro:before-swap",
+      () => observer.disconnect(),
+      { once: true },
+    );
+  });
+</script>

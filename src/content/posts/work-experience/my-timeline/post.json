@@ -8,5 +8,7 @@
   ],
   "cover": "notes",
   "featured": true,
-  "slug": "my-timeline"
+  "slug": "my-timeline",
+  "coverImage": "/images/git-timeline.png",
+  "coverFit": "contain"
 }
