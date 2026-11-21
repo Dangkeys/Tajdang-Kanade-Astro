@@ -32,25 +32,20 @@ const media = await Promise.all(
   article
 >
   <div class="shell reading-shell">
-    {tocHeadings.length > 0 && (
-      <details class="card mobile-article-nav">
-        <summary>
-          <span class="icon-[lucide--list]" aria-hidden="true"></span>
-          {lang === "th" ? "ในบทความนี้" : "On this page"}
-          <span
-            class="toc-chevron icon-[lucide--chevron-down]"
-            aria-hidden="true"
-          ></span>
-        </summary>
-        <div class="mobile-toc-content">
-          <ArticleContents headings={tocHeadings} lang={lang} compact />
-        </div>
-      </details>
-    )}
+    <details class="card mobile-article-nav">
+      <summary>
+        <span class="icon-[lucide--list]" aria-hidden="true"></span>
+        {lang === "th" ? "ในบทความนี้" : "On this page"}
+        <span
+          class="toc-chevron icon-[lucide--chevron-down]"
+          aria-hidden="true"
+        ></span>
+      </summary>
+      <div class="mobile-toc-content">
+        <ArticleContents headings={tocHeadings} lang={lang} compact />
+      </div>
+    </details>
     <article class="card portfolio-article">
-      <a class="text-link" href={homePath(lang)}>
-        {t("article.back")}
-      </a>
       <div class="article-heading">
         <span class="eyebrow">TAJDANG / {post.data.category}</span>
         <h1>{post.data.title}</h1>
@@ -73,12 +68,14 @@ const media = await Promise.all(
       </div>
       <div class="section-rule"></div>
       <p class="muted">{t("article.thanks")}</p>
+      <a class="btn secondary article-home" href={homePath(lang)}>
+        <span class="icon-[lucide--arrow-left]" aria-hidden="true"></span>
+        {t("article.back")}
+      </a>
     </article>
-    {tocHeadings.length > 0 && (
-      <aside class="article-sidebar card article-navigation">
-        <ArticleContents headings={tocHeadings} lang={lang} />
-      </aside>
-    )}
+    <aside class="article-sidebar card article-navigation">
+      <ArticleContents headings={tocHeadings} lang={lang} />
+    </aside>
   </div>
 </BaseLayout>
 <style>
@@ -116,6 +113,9 @@ const media = await Promise.all(
   }
   .article-navigation {
     padding: 22px;
+  }
+  .article-home {
+    margin-top: 16px;
   }
   .mobile-article-nav {
     display: none;

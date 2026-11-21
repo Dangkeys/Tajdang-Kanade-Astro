@@ -87,7 +87,7 @@ const alternate = noindex
       {t("common.skip")}
     </a>
     <div class="portfolio-controls">
-      {!home && (
+      {!home && !article && (
         <a href={homePath(lang)} class="control-home">
           {t("nav.home")}
         </a>

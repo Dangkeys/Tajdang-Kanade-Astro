@@ -1,12 +1,13 @@
 ---
 import type { MarkdownHeading } from "astro";
-import type { Language } from "../i18n";
+import { homePath, translator, type Language } from "../i18n";
 interface Props {
   headings: MarkdownHeading[];
   lang: Language;
   compact?: boolean;
 }
 const { headings, lang, compact = false } = Astro.props;
+const t = translator(lang);
 const baseDepth = headings.length
   ? Math.min(...headings.map((heading) => heading.depth))
   : 2;
@@ -16,9 +17,15 @@ const baseDepth = headings.length
   class="article-toc"
   aria-label={lang === "th" ? "ในบทความนี้" : "On this page"}
 >
-  <h2 class:list={{ "sr-only": compact }}>
-    {lang === "th" ? "ในบทความนี้" : "On this page"}
-  </h2>
+  <a class="toc-home" href={homePath(lang)}>
+    <span class="icon-[lucide--arrow-left]" aria-hidden="true"></span>
+    {t("article.back")}
+  </a>
+  {headings.length > 0 && (
+    <h2 class:list={{ "sr-only": compact }}>
+      {lang === "th" ? "ในบทความนี้" : "On this page"}
+    </h2>
+  )}
   <ol>
     {headings.map((heading) => (
       <li style={`padding-inline-start: ${(heading.depth - baseDepth) * 12}px`}>
@@ -28,6 +35,17 @@ const baseDepth = headings.length
   </ol>
 </nav>
 <style>
+  .article-toc .toc-home {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 44px;
+    margin-bottom: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--line);
+    color: var(--accent);
+    font-size: 14px;
+  }
   .article-toc h2 {
     font-size: 14px;
     margin: 0 0 12px;

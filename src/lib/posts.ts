@@ -10,6 +10,7 @@ export type PostSummary = {
   category: string;
   tags: string[];
   cover: string;
+  coverImage?: string;
   featured: boolean;
   minutes: number;
 };
@@ -31,6 +32,7 @@ export function summarize(post: CollectionEntry<"posts">): PostSummary {
   return {
     id: getPostId(post),
     ...post.data,
+    coverImage: post.data.media.find((item) => item.type === "image")?.src,
     date: post.data.date.toISOString().slice(0, 10),
     minutes: readingMinutes(post.body ?? "", post.data.lang),
   };

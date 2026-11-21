@@ -1,181 +1,48 @@
 <script setup lang="ts">
-import { translator, type Language } from "../../i18n";
-const props = defineProps<{
-  kind: string;
-  featured?: boolean;
-  lang?: Language;
-}>();
-const t = translator(props.lang ?? "en");
-const labels: Record<string, { icon: string; title: string; sub: string }> = {
-  astro: {
-    icon: "icon-[simple-icons--astro]",
-    title: "Astro",
-    sub: t("cover.astroSubtitle"),
-  },
-  vue: {
-    icon: "icon-[simple-icons--vuedotjs]",
-    title: "Vue.js",
-    sub: t("cover.vueSubtitle"),
-  },
-  css: {
-    icon: "icon-[lucide--palette]",
-    title: t("cover.cssTitle"),
-    sub: t("cover.cssSubtitle"),
-  },
-  notes: {
-    icon: "icon-[lucide--coffee]",
-    title: t("cover.notesTitle"),
-    sub: t("cover.notesSubtitle"),
-  },
-  life: {
-    icon: "icon-[lucide--sprout]",
-    title: t("cover.lifeTitle"),
-    sub: t("cover.lifeSubtitle"),
-  },
-  typescript: {
-    icon: "icon-[simple-icons--typescript]",
-    title: "TypeScript",
-    sub: t("cover.typescriptSubtitle"),
-  },
-  git: {
-    icon: "icon-[simple-icons--git]",
-    title: t("cover.gitTitle"),
-    sub: t("cover.gitSubtitle"),
-  },
-  design: {
-    icon: "icon-[lucide--sparkles]",
-    title: t("cover.designTitle"),
-    sub: t("cover.designSubtitle"),
-  },
+defineProps<{ image?: string; kind?: string }>();
+const icons: Record<string, string> = {
+  astro: "icon-[simple-icons--astro]",
+  vue: "icon-[simple-icons--vuedotjs]",
+  css: "icon-[lucide--palette]",
+  notes: "icon-[lucide--coffee]",
+  life: "icon-[lucide--sprout]",
+  typescript: "icon-[simple-icons--typescript]",
+  git: "icon-[lucide--git-branch]",
+  design: "icon-[lucide--sparkles]",
 };
 </script>
+
 <template>
-  <div class="post-cover" :class="[kind, { featured }]" aria-hidden="true">
-    <div class="cover-grid"></div>
-    <span class="cover-orbit"></span><span class="cover-dot"></span>
-    <span class="cover-corner">{{ t("cover.journal") }}</span>
-    <span class="cover-icon" :class="labels[kind]?.icon"></span>
-    <strong>{{
-      featured ? t("cover.featuredTitle") : labels[kind]?.title
-    }}</strong>
-    <small>{{
-      featured ? t("cover.featuredSubtitle") : labels[kind]?.sub
-    }}</small>
-    <span class="cover-star">✧</span>
+  <div class="post-cover" aria-hidden="true">
+    <img v-if="image" :src="image" alt="" loading="lazy" decoding="async" />
+    <span
+      v-else
+      class="cover-icon"
+      :class="icons[kind ?? 'notes'] ?? icons.notes"
+    ></span>
   </div>
 </template>
+
 <style scoped>
 .post-cover {
-  min-height: 180px;
-  height: 100%;
   position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 160px;
   overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  color: var(--plum);
   background: var(--plum-soft);
-  padding: 28px 12px;
-  isolation: isolate;
-}
-.cover-grid {
-  position: absolute;
-  inset: 0;
-  background-image:
-    linear-gradient(#ffffff42 1px, transparent 1px),
-    linear-gradient(90deg, #ffffff42 1px, transparent 1px);
-  background-size: 23px 23px;
-  z-index: -1;
-  mask-image: linear-gradient(30deg, black, transparent 80%);
-}
-.cover-orbit {
-  position: absolute;
-  height: 190px;
-  width: 190px;
-  border: 1px solid #ffffff70;
-  border-radius: 50%;
-  right: -75px;
-  top: -80px;
-  box-shadow:
-    0 0 0 20px #ffffff15,
-    0 0 0 40px #ffffff15;
-  z-index: -1;
-}
-.cover-dot {
-  position: absolute;
-  bottom: -35px;
-  left: -40px;
-  border-radius: 50%;
-  width: 120px;
-  height: 120px;
-  background: #ffffff25;
-}
-.cover-corner {
-  position: absolute;
-  top: 13px;
-  left: 15px;
-  font:
-    7px "Oxanium-Medium",
-    var(--font-body);
-  letter-spacing: 0.14em;
-  opacity: 0.6;
+  display: grid;
+  place-items: center;
 }
 .cover-icon {
-  display: block;
-  font-size: 43px;
-  margin: 4px 0 7px;
-  opacity: 0.86;
+  color: var(--plum);
+  font-size: 44px;
 }
-strong {
-  font:
-    600 25px "Oxanium-Medium",
-    var(--font-body);
-  letter-spacing: -0.6px;
-  white-space: nowrap;
-}
-small {
-  font:
-    6px "Oxanium-Medium",
-    var(--font-body);
-  letter-spacing: 0.12em;
-  margin-top: 9px;
-  opacity: 0.75;
-  white-space: nowrap;
-}
-.cover-star {
+.post-cover img {
   position: absolute;
-  font-size: 30px;
-  bottom: 16px;
-  right: 18px;
-  opacity: 0.5;
-}
-.css {
-  background: var(--accent-soft);
-  color: var(--accent);
-}
-.vue,
-.life {
-  background: var(--gold-soft);
-  color: var(--gold);
-}
-.notes {
-  background: var(--gold-soft);
-  color: var(--gold);
-}
-.typescript {
-  background: var(--plum-soft);
-  color: var(--plum);
-}
-.git {
-  background: var(--accent-soft);
-  color: var(--accent);
-}
-.design {
-  background: var(--plum-soft);
-  color: var(--plum);
-}
-.featured {
-  background: var(--plum-soft);
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 </style>

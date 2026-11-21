@@ -9,7 +9,17 @@ interface Props {
   lang?: Language;
 }
 const { lang = "en" } = Astro.props;
-const posts = (await getPosts(lang)).map(summarize);
+const posts = await Promise.all(
+  (await getPosts(lang)).map(async (post) => {
+    const summary = summarize(post);
+    return {
+      ...summary,
+      coverImage: summary.coverImage
+        ? await optimizedImageUrl(summary.coverImage, 720)
+        : undefined,
+    };
+  }),
+);
 const [avatarSrc, portraitSrc] = await Promise.all([
   optimizedImageUrl(personalInfo.avatar, 176),
   optimizedImageUrl("/images/taj-portrait.png", 480),

@@ -558,9 +558,10 @@ onMounted(() => readUrl());
         >
           <a
             :href="`${home}posts/${post.id}/`"
+            :aria-label="post.title"
             class="post-tile"
             :class="post.category"
-            ><PostCover :kind="post.cover" :lang="lang"
+            ><PostCover :image="post.coverImage" :kind="post.cover"
           /></a>
           <div class="post-copy">
             <div class="post-kicker">
@@ -840,6 +841,8 @@ onMounted(() => readUrl());
   border-color: var(--accent);
 }
 .post-tile {
+  height: 160px;
+  align-self: start;
   overflow: hidden;
   border-radius: 11px;
   background: var(--plum-soft);
@@ -849,7 +852,7 @@ onMounted(() => readUrl());
   align-items: center;
   justify-content: center;
   gap: 16px;
-  min-height: 195px;
+  min-height: 160px;
   font-size: 13px;
 }
 .post-tile.projects {
@@ -935,8 +938,7 @@ onMounted(() => readUrl());
     gap: 14px;
   }
   .post-tile {
-    min-height: 180px;
-    font-size: 11px;
+    min-height: 160px;
   }
   .post-tile span:first-child {
     font-size: 32px;
@@ -1104,16 +1106,6 @@ onMounted(() => readUrl());
 @media (prefers-reduced-motion: reduce) {
   .portfolio-post:hover .post-tile :deep(.post-cover) {
     transform: none;
-  }
-}
-</style>
-
-<style scoped>
-@media (max-width: 760px) {
-  .post-tile :deep(strong) {
-    font-size: 16px;
-    white-space: normal;
-    text-align: center;
   }
 }
 </style>
