@@ -27,11 +27,11 @@ Freelance backend development with Go, MongoDB, an external AI API, and Docker.
 
 PetNMed and Essentia
 
-## May to June 2025: Advisory internship
+## April to June 2025: BKBIET internship in India
 
 I worked on an Expo / React Native consultation app during my internship associated with BKBIET in Pilani, India.
 
-[Advisory](../advisory/)
+[BKBIET internship](../bkbiet-internship/)
 
 ## September 2025: HoraHub
 

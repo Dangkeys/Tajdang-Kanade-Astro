@@ -7,7 +7,7 @@ category: "projects"
 cover: "typescript"
 tags: ["Backend/NestJS", "Backend/PostgreSQL", "Backend/Socket.io"]
 featured: false
-draft: true
+draft: false
 ---
 
 ## งาน Backend

@@ -27,11 +27,11 @@ PetNMed และ Essentia
 
 PetNMed และ Essentia
 
-## พฤษภาคมถึงมิถุนายน 2025: ฝึกงาน Advisory
+## เมษายนถึงมิถุนายน 2025: ฝึกงานที่ BKBIET ประเทศอินเดีย
 
 ทำแอปให้คำปรึกษาด้วย Expo / React Native ในการฝึกงานที่เกี่ยวข้องกับ BKBIET เมือง Pilani ประเทศอินเดีย
 
-[Advisory](../advisory/)
+[ฝึกงานที่ BKBIET](../bkbiet-internship/)
 
 ## กันยายน 2025: HoraHub
 

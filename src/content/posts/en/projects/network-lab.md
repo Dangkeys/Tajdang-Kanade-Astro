@@ -7,7 +7,7 @@ category: "projects"
 cover: "git"
 tags: ["Infrastructure/Networking", "Infrastructure/Ansible", "Infrastructure/Containerlab", "Infrastructure/CI"]
 featured: false
-draft: true
+draft: false
 ---
 
 ## Current status
