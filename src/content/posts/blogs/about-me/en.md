@@ -1,10 +1,6 @@
 ---
 title: "About me"
 description: "Computer Engineering student at KMITL. Backend, mobile, games, and homelab."
-mediaText:
-  media-1:
-    alt: "Tajdang’s illustrated avatar"
-    caption: "My illustrated avatar."
 ---
 
 ## Hi, I’m Tajdang
@@ -16,7 +12,3 @@ I’ve worked on backend and mobile apps: [Advisory](../../projects/advisory/en.
 ## Outside work
 
 I like homelab and tech, chess, going to the gym, and reading.
-
-## Contact
-
-[GitHub](https://github.com/Dangkeys) · [LinkedIn](https://www.linkedin.com/in/taj-dangkomen-5319b03a3/) · [Instagram](https://www.instagram.com/t_tajdang/) · [Email](mailto:taj.dangkomen@gmail.com)
