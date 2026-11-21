@@ -5,13 +5,13 @@ date: 2026-11-21
 lang: th
 category: personal
 cover: notes
-tags: ["Infrastructure/Networking"]
+tags: []
 featured: false
 media:
   - type: image
     src: /images/taj-portrait.png
     alt: Portrait of Tajdang
-    caption: อีกมุมหนึ่งของผม
+    caption: หน้าของไอหมอนี่
   - type: image
     src: /images/tajdang-avatar.png
     alt: Tajdang’s illustrated avatar
@@ -21,7 +21,7 @@ media:
 ## สวัสดีครับ ผม Tajdang
 
 ผมทำงานเป็น Presales Network Engineer สนใจโครงสร้างพื้นฐาน เครือข่าย และการทำความเข้าใจว่าส่วนต่าง ๆ ของระบบทำงานร่วมกันอย่างไร
-
+ดฟหกดฟหกดฟหกดฟหกดฟดฟหกดฟหกดหกดฟหกดหกดดดด
 ตอนนี้ผมกำลังเตรียมสมัครฝึกงานด้าน Infrastructure ที่ Agoda และใช้เว็บไซต์นี้รวบรวมผลงาน ประสบการณ์ และสิ่งที่ได้เรียนรู้ระหว่างทาง
 
 ## สิ่งที่กำลังสนใจ

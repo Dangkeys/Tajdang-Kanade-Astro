@@ -5,7 +5,7 @@ date: 2026-11-21
 lang: en
 category: personal
 cover: notes
-tags: ["Infrastructure/Networking"]
+tags: []
 featured: false
 media:
   - type: image

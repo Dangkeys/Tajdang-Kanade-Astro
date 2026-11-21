@@ -256,9 +256,7 @@ onMounted(() => readUrl());
         <h2>Tajdang<span class="accent">.</span></h2>
         <p class="role">{{ t("author.role") }}</p>
         <p class="muted">{{ t("author.bio") }}</p>
-        <a :href="`${home}posts/about-me/`" class="text-link">{{
-          th ? "รู้จักผมมากขึ้น" : "A little more about me"
-        }}</a>
+
         <div class="contacts">
           <a
             v-for="link in personalInfo.socialLinks"
@@ -321,7 +319,7 @@ onMounted(() => readUrl());
             :aria-label="th ? 'ค้นหาผลงาน' : 'Search my work'"
             :placeholder="
               th
-                ? 'ค้นหาโปรเจกต์ ทักษะ หรือเรื่องที่สนใจ…'
+                ? 'ค้นหาอะไรดีน้าาา'
                 : 'Search projects, skills, or a topic…'
             "
         /></label>
