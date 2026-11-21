@@ -1,16 +1,12 @@
 import settings from "../site.config.json" with { type: "json" };
-import zhCN from "./zh-CN.json" with { type: "json" };
+import th from "./th.json" with { type: "json" };
 import en from "./en.json" with { type: "json" };
-import ja from "./ja.json" with { type: "json" };
 
-export const languages = ["zh-CN", "en", "ja"] as const;
+export const languages = ["en", "th"] as const;
 export type Language = (typeof languages)[number];
-export type TranslationKey = keyof typeof zhCN;
+export type TranslationKey = keyof typeof en;
 type Dictionary = Record<TranslationKey, string>;
-export const dictionaries = { "zh-CN": zhCN, en, ja } satisfies Record<
-  Language,
-  Dictionary
->;
+export const dictionaries = { en, th } satisfies Record<Language, Dictionary>;
 
 // PUBLIC_SITE_LANGUAGE is an optional build override, also usable by Node tests.
 const requestedLanguage =
@@ -21,15 +17,13 @@ const requestedLanguage =
   settings.language;
 if (!languages.some((value) => value === requestedLanguage)) {
   throw new Error(
-    `Unsupported site language: ${requestedLanguage}. Use zh-CN, en, or ja in src/site.config.json.`,
+    `Unsupported site language: ${requestedLanguage}. Use en or th in src/site.config.json.`,
   );
 }
 export const language = requestedLanguage as Language;
-export const locales = { "zh-CN": "zh-CN", en: "en-US", ja: "ja-JP" } as const;
+export const locales = { en: "en-US", th: "th-TH" } as const;
 export const locale = locales[language];
-export const ogLocale = { "zh-CN": "zh_CN", en: "en_US", ja: "ja_JP" }[
-  language
-];
+export const ogLocale = { en: "en_US", th: "th_TH" }[language];
 
 export function translate(
   lang: Language,
@@ -77,3 +71,9 @@ export function formatDate(
     ...options,
   }).format(new Date(value));
 }
+
+export const translator =
+  (lang: Language) =>
+  (key: TranslationKey, values?: Record<string, string | number>) =>
+    translate(lang, key, values);
+export const homePath = (lang: Language) => (lang === "th" ? "/th/" : "/");

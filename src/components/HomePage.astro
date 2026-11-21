@@ -1,0 +1,15 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Portfolio from "./Portfolio.vue";
+import { getPosts, summarize } from "../lib/posts";
+import type { Language } from "../i18n";
+interface Props {
+  lang?: Language;
+}
+const { lang = "en" } = Astro.props;
+const posts = (await getPosts(lang)).map(summarize);
+---
+
+<BaseLayout home lang={lang}>
+  <Portfolio posts={posts} lang={lang} client:load />
+</BaseLayout>

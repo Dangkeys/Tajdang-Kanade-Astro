@@ -1,16 +1,12 @@
 ---
-import { t } from "../i18n";
-import { siteInfo, personalInfo, welcomeConfig } from "../config";
+import { ClientRouter } from "astro:transitions";
+import { translator, homePath, type Language } from "../i18n";
+import { siteInfo, personalInfo } from "../config";
+import Welcome from "../components/header/Welcome.astro";
 import "../styles/global.css";
 import "@fontsource-variable/noto-sans";
-import "@fontsource-variable/noto-sans-jp";
-import "@fontsource-variable/noto-sans-sc";
+import "@fontsource-variable/noto-sans-thai";
 import "@fontsource-variable/jetbrains-mono";
-import Navigation from "../components/header/Navigation.vue";
-import Welcome from "../components/header/Welcome.astro";
-import Search from "../components/header/Search.vue";
-import MainContainer from "../components/MainContainer.vue";
-import { getPosts, summarize } from "../lib/posts";
 interface Props {
   title?: string;
   description?: string;
@@ -20,67 +16,52 @@ interface Props {
   article?: boolean;
   publishedTime?: string;
   noindex?: boolean;
+  lang?: Language;
 }
 const {
+  lang = "en",
   title,
-  description = siteInfo.description,
+  home = false,
+  noindex = false,
+  description,
   heroTitle,
   heroSubtitle,
-  home = false,
-  article = false,
-  publishedTime,
-  noindex = false,
 } = Astro.props;
-const posts = (await getPosts()).map(summarize);
-const pageTitle = title
-  ? `${title} · ${siteInfo.title}`
-  : `${siteInfo.title} · ${siteInfo.titleSuffix}`;
+const t = translator(lang);
 const canonical = new URL(Astro.url.pathname, siteInfo.url);
+const alternate =
+  lang === "th"
+    ? Astro.url.pathname.replace(/^\/th/, "") || "/"
+    : `/th${Astro.url.pathname}`;
 ---
 
 <!doctype html>
-<html lang={siteInfo.language}>
+<html lang={lang}>
   <head>
     <meta charset="utf-8" />
-    <link rel="icon" type="image/svg+xml" href={siteInfo.favicon} />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="generator" content={Astro.generator} />
-    <meta name="description" content={description} />
-    <meta name="keywords" content={siteInfo.keywords.join(", ")} />
-    <meta name="author" content={personalInfo.name} />
+    <link rel="icon" href={siteInfo.favicon} type="image/svg+xml" />
+    <meta name="description" content={description || t("site.description")} />
+    <meta name="theme-color" content="#241e2e" />
     {noindex && <meta name="robots" content="noindex, follow" />}
-    <meta name="theme-color" content="#faf3e8" />
-    <meta property="og:title" content={pageTitle} />
-    <meta property="og:description" content={description} />
-    <meta property="og:site_name" content={siteInfo.title} />
-    <meta property="og:locale" content={siteInfo.locale} />
-    <meta property="og:type" content={article ? "article" : "website"} />
-    <meta property="og:url" content={canonical} />
-    <meta
-      property="og:image"
-      content={new URL(welcomeConfig.bgImage, siteInfo.url)}
-    />
-    {article && publishedTime && (
-      <meta property="article:published_time" content={publishedTime} />
-    )}
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content={pageTitle} />
-    <meta name="twitter:description" content={description} />
-    <meta
-      name="twitter:image"
-      content={new URL(welcomeConfig.bgImage, siteInfo.url)}
-    />
     <link rel="canonical" href={canonical} />
     <link
       rel="alternate"
-      type="application/rss+xml"
-      title={`${siteInfo.title} RSS`}
-      href="/rss.xml"
+      hreflang={lang === "th" ? "en" : "th"}
+      href={new URL(alternate, siteInfo.url)}
     />
-    <link rel="sitemap" href="/sitemap-index.xml" />
-    <title>{pageTitle}</title>
+    <meta property="og:title" content={title || t("hero.title")} />
+    <meta
+      property="og:description"
+      content={description || t("site.description")}
+    />
+    <meta
+      property="og:image"
+      content={new URL("/images/L.png", siteInfo.url)}
+    />
+    <title>{title ? `${title} · Tajdang` : `Tajdang · ${t("site.titleSuffix")}`}</title>
     <script is:inline>
-      (() => {
+      function restoreTheme() {
         let theme;
         try {
           theme = localStorage.getItem("theme");
@@ -91,72 +72,126 @@ const canonical = new URL(Astro.url.pathname, siteInfo.url);
             (theme !== "light" &&
               matchMedia("(prefers-color-scheme: dark)").matches),
         );
-      })();
+      }
+      restoreTheme();
+      document.addEventListener("astro:after-swap", restoreTheme);
     </script>
+    <ClientRouter />
   </head>
   <body>
     <a class="skip-link" href="#main-content">
       {t("common.skip")}
     </a>
-    <Navigation pathname={Astro.url.pathname} client:load />
-    <Search posts={posts} client:load />
+    <div class="portfolio-controls">
+      {!home && (
+        <a href={homePath(lang)} class="control-home">
+          {t("nav.home")}
+        </a>
+      )}
+      <a
+        class="language-control"
+        href={`${alternate}${Astro.url.search}`}
+        hreflang={lang === "th" ? "en" : "th"}
+        aria-label={lang === "en" ? "เปลี่ยนเป็นภาษาไทย" : "Switch to English"}
+      >
+        <span class:list={{ current: lang === "en" }}>EN</span>
+        <span aria-hidden="true">/</span>
+        <span class:list={{ current: lang === "th" }}>TH</span>
+      </a>
+      <button
+        class="theme-control"
+        aria-label={lang === "en" ? "Change color theme" : "เปลี่ยนธีมสี"}
+      >
+        <span class="icon-[lucide--sun-moon]" aria-hidden="true"></span>
+      </button>
+    </div>
     <Welcome
       compact={!home}
-      title={heroTitle}
-      subtitle={heroSubtitle}
-      headingLevel={article ? 2 : 1}
+      title={heroTitle || t("hero.title")}
+      subtitle={heroSubtitle || t("hero.subtitle")}
+      lang={lang}
     />
-    <MainContainer>
-      <main id="main-content" tabindex="-1">
-        <slot />
-      </main>
-    </MainContainer>
+    <main id="main-content" tabindex="-1" transition:animate="slide">
+      <slot />
+    </main>
     <footer class="site-footer">
-      <a href="/" class="footer-mark">
-        <span class="accent">✿</span> {siteInfo.title}.
+      <a class="footer-mark" href={homePath(lang)}>
+        Tajdang<span class="accent">.</span>
       </a>
       <p>{t("footer.message")}</p>
       <p>
-        © {new Date().getFullYear()} {personalInfo.englishName} ·{" "}
-        {t("footer.builtWith")}{" "}
-        <a href="https://astro.build" target="_blank" rel="noopener noreferrer">
-          Astro
-        </a>{" "}
-        &amp; <span class="accent">♥</span> · {t("footer.theme")}:{" "}
+        © {new Date().getFullYear()} Tajdang ·{" "}
+        {lang === "en" ? "A personal fork of" : "เว็บไซต์ส่วนตัวที่ต่อยอดจาก"}{" "}
         <a
+          class="accent"
           href="https://github.com/sudoriaa/Kanade-Astro"
           target="_blank"
           rel="noopener noreferrer"
         >
           Kanade
         </a>{" "}
-        · <a href="/rss.xml">{t("common.rss")}</a> ·{" "}
-        <a href="/about/">{t("common.aboutSite")}</a>
+        ·{" "}
+        {lang === "en"
+          ? "Explore the original open source theme."
+          : "ลองดูธีมโอเพนซอร์สต้นฉบับได้เลยครับ"}
       </p>
+      <a
+        class="text-link"
+        href={personalInfo.github}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        GitHub
+      </a>
     </footer>
-    <button
-      class="back-top"
-      id="back-top"
-      aria-label={t("common.backTop")}
-      hidden
-    >
-      <span class="icon-[lucide--arrow-up]"></span>
-    </button>
     <script>
-      const button = document.querySelector<HTMLButtonElement>("#back-top");
-      const update = () => {
-        if (button) button.hidden = window.scrollY < 500;
-      };
-      window.addEventListener("scroll", update, { passive: true });
-      button?.addEventListener("click", () =>
-        window.scrollTo({
-          top: 0,
-          behavior: matchMedia("(prefers-reduced-motion: reduce)").matches
-            ? "instant"
-            : "smooth",
-        }),
-      );
-      update();
+      import { toggleTheme } from "../scripts/theme";
+      document.addEventListener("astro:page-load", () => {
+        document
+          .querySelector(".theme-control")
+          ?.addEventListener("click", () => toggleTheme());
+      });
     </script>
   </body>
 </html>
+<style>
+  .portfolio-controls {
+    position: absolute;
+    z-index: 30;
+    top: 20px;
+    right: clamp(16px, 4vw, 60px);
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    color: #fffaf2;
+  }
+  .portfolio-controls a,
+  .portfolio-controls button {
+    border: 1px solid #ffffff55;
+    border-radius: 30px;
+    background: #2b223570;
+    color: inherit;
+    backdrop-filter: blur(12px);
+    padding: 8px 15px;
+    font-size: 14px;
+  }
+  .language-control {
+    display: flex;
+    gap: 8px;
+  }
+  .language-control span {
+    opacity: 0.55;
+  }
+  .language-control .current {
+    opacity: 1;
+    font-weight: 700;
+  }
+  .portfolio-controls .theme-control {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    font-size: 20px;
+  }
+</style>

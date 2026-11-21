@@ -1,14 +1,22 @@
 ---
-import { t } from "../../i18n";
+import { translator, type Language } from "../../i18n";
 import { welcomeConfig } from "../../config";
 import Waves from "./Waves.vue";
 interface Props {
+  lang?: Language;
   compact?: boolean;
   title?: string;
   subtitle?: string;
   headingLevel?: 1 | 2;
 }
-const { compact = false, title, subtitle, headingLevel = 1 } = Astro.props;
+const {
+  lang = "en",
+  compact = false,
+  title,
+  subtitle,
+  headingLevel = 1,
+} = Astro.props;
+const t = translator(lang);
 const Heading = headingLevel === 1 ? "h1" : "h2";
 ---
 
@@ -42,6 +50,32 @@ const Heading = headingLevel === 1 ? "h1" : "h2";
   <Waves class="hero-waves" />
 </section>
 <style>
+  .hero-content {
+    animation: hero-arrive 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  }
+  .hero-sparkle {
+    animation: sparkle-drift 4s ease-in-out infinite;
+  }
+  @keyframes hero-arrive {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  @keyframes sparkle-drift {
+    0%,
+    100% {
+      transform: translateY(0) rotate(0);
+    }
+    50% {
+      transform: translateY(-7px) rotate(12deg);
+    }
+  }
+
   .welcome-section {
     position: relative;
     height: 450px;

@@ -508,3 +508,20 @@ a.chip:hover {
     scroll-behavior: auto;
   }
 }
+
+html {
+  background: var(--bg);
+}
+:root:lang(th) {
+  --font-body: "Noto Sans Thai Variable", "Noto Sans Variable", sans-serif;
+}
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.18s;
+}
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
+  }
+}

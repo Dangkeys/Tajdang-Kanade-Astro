@@ -1,0 +1,13 @@
+---
+import ArticlePage from "../../../components/ArticlePage.astro";
+import { getPosts, getPostId } from "../../../lib/posts";
+export async function getStaticPaths() {
+  return (await getPosts("th")).map((post) => ({
+    params: { id: getPostId(post) },
+    props: { post },
+  }));
+}
+const { post } = Astro.props;
+---
+
+<ArticlePage post={post} lang="th" />

@@ -1,6 +1,6 @@
 import { getCollection, type CollectionEntry } from "astro:content";
 import { categoryNames } from "../data/post-options";
-import { language } from "../i18n";
+import { language, type Language } from "../i18n";
 
 export type PostSummary = {
   id: string;
@@ -15,11 +15,11 @@ export type PostSummary = {
 };
 export const categories = categoryNames;
 
-export async function getPosts() {
+export async function getPosts(lang: Language = language) {
   return (
     await getCollection(
       "posts",
-      ({ data }) => !data.draft && data.lang === language,
+      ({ data }) => !data.draft && data.lang === lang,
     )
   ).sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 }

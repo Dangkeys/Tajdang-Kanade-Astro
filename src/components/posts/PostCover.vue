@@ -1,6 +1,11 @@
 <script setup lang="ts">
-import { t } from "../../i18n";
-defineProps<{ kind: string; featured?: boolean }>();
+import { translator, type Language } from "../../i18n";
+const props = defineProps<{
+  kind: string;
+  featured?: boolean;
+  lang?: Language;
+}>();
+const t = translator(props.lang ?? "en");
 const labels: Record<string, { icon: string; title: string; sub: string }> = {
   astro: {
     icon: "icon-[simple-icons--astro]",
