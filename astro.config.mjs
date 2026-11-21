@@ -38,6 +38,14 @@ export default defineConfig({
   compressHTML: true,
   integrations: [
     vue(),
+    {
+      name: "separate-vite-caches",
+      hooks: {
+        "astro:config:setup"({ command, updateConfig }) {
+          updateConfig({ vite: { cacheDir: `node_modules/.vite-${command}` } });
+        },
+      },
+    },
     sitemap({
       filter: (page) =>
         !["/404/", "/404.html", "/articles/", "/comments/"].includes(

@@ -1,0 +1,13 @@
+{
+  "date": "2026-11-21",
+  "category": "projects",
+  "tags": [
+    "Backend/NestJS",
+    "Backend/PostgreSQL",
+    "Backend/Socket.io"
+  ],
+  "cover": "typescript",
+  "featured": false,
+  "draft": false,
+  "slug": "horahub"
+}

@@ -1,0 +1,13 @@
+{
+  "date": "2026-11-21",
+  "category": "blogs",
+  "tags": [
+    "Infrastructure/Networking/Containerlab",
+    "Infrastructure/Automation/Ansible"
+  ],
+  "cover": "notes",
+  "coverImage": "/images/containerlab.svg",
+  "featured": true,
+  "draft": false,
+  "slug": "containerlab"
+}

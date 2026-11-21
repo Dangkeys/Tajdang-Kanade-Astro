@@ -1,0 +1,15 @@
+{
+  "date": "2026-11-21",
+  "category": "work-experience",
+  "tags": [
+    "Backend/Go",
+    "Backend/MongoDB",
+    "Infrastructure/Docker",
+    "Mobile/Flutter",
+    "Mobile/Firebase"
+  ],
+  "cover": "git",
+  "featured": false,
+  "draft": false,
+  "slug": "freelance-work"
+}

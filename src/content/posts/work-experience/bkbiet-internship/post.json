@@ -1,0 +1,14 @@
+{
+  "date": "2026-11-21",
+  "category": "work-experience",
+  "tags": [
+    "Work/Internship/India",
+    "Work/BKBIET",
+    "Mobile/React Native"
+  ],
+  "cover": "notes",
+  "coverImage": "/images/advisory.png",
+  "featured": true,
+  "draft": false,
+  "slug": "bkbiet-internship"
+}

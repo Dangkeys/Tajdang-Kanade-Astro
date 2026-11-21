@@ -9,8 +9,10 @@ import {
   existsSync,
 } from "node:fs";
 import { tmpdir } from "node:os";
-import { join, resolve, dirname } from "node:path";
+import { join, resolve, dirname, basename } from "node:path";
 import { pathToFileURL } from "node:url";
+import { parseFrontmatter } from "astro/markdown";
+import { slug } from "github-slugger";
 import { satteri } from "@astrojs/markdown-satteri";
 import { relativePostLinks } from "../src/lib/relative-post-links";
 
@@ -26,10 +28,10 @@ for (const lang of ["en", "th"]) {
     await expect(advisory).toHaveAttribute("href", `${prefix}/posts/advisory/`);
     await advisory.click();
     await expect(page).toHaveURL(`${prefix}/posts/advisory/`);
-    await expect(page.locator("h1")).toHaveText(/Advisory/);
+    await expect(page.locator("article h1")).toHaveText(/Advisory/);
     await page.locator("#article-body a", { hasText: /BKBIET/ }).click();
     await expect(page).toHaveURL(`${prefix}/posts/bkbiet-internship/`);
-    await expect(page.locator("h1")).toHaveText(/BKBIET/);
+    await expect(page.locator("article h1")).toHaveText(/BKBIET/);
   });
 }
 
@@ -62,27 +64,38 @@ test("Markdown renderer resolves encoded files, headings, references, languages,
     const target = join(root, path);
     mkdirSync(dirname(target), { recursive: true });
     writeFileSync(
+      join(dirname(target), "post.json"),
+      JSON.stringify({
+        slug: slug(basename(dirname(target))),
+        date: "2026-11-21",
+        category: "projects",
+        tags: [],
+        cover: "notes",
+        ...parseFrontmatter(`---\n${metadata}\n---`).frontmatter,
+      }),
+    );
+    writeFileSync(
       target,
-      `---\ncategory: projects\n${metadata}\n---\n## Hello World\n`,
+      "---\ntitle: Example\ndescription: Example note\n---\n## Hello World\n",
     );
     return target;
   }
   try {
-    const source = note("en/blogs/source.md", "lang: en");
-    note("th/projects/Hello โลก.md", "lang: th");
-    note("en/projects/custom.md", "slug: custom-address");
-    note("en/projects/nested/index.md", "lang: en");
-    note("en/projects/draft.md", "draft: true");
+    const source = note("blogs/source/en.md", "");
+    note("projects/Hello โลก/th.md", "");
+    note("projects/custom/en.md", "slug: custom-address");
+    note("projects/nested/en.md", "");
+    note("projects/draft/en.md", "draft: true");
     const renderer = await satteri({
       mdastPlugins: relativePostLinks({ postsDirectory: root }),
     }).createRenderer({ syntaxHighlight: false });
     const { code } = await renderer.render(
       [
-        "[Thai](../../th/projects/Hello%20%E0%B9%82%E0%B8%A5%E0%B8%81.md?from=note#Hello%20World)",
+        "[Thai](../../projects/Hello%20%E0%B9%82%E0%B8%A5%E0%B8%81/th.md?from=note#Hello%20World)",
         "[Custom][custom]",
-        "[custom]: ../projects/custom.md",
+        "[custom]: ../../projects/custom/en.md",
         "",
-        "[Nested](../projects/nested/index.md)",
+        "[Nested](../../projects/nested/en.md)",
         "[External](https://example.com/note.md)",
         "[Mail](mailto:hello@example.com)",
         "[Heading](#Hello%20World)",
@@ -107,8 +120,8 @@ test("Markdown renderer resolves encoded files, headings, references, languages,
       expect(code).toContain(`href="${url}"`);
     expect(code).toContain("[Code](../missing.md)");
     for (const url of [
-      "../projects/missing.md",
-      "../projects/draft.md",
+      "../../projects/missing/en.md",
+      "../../projects/draft/en.md",
       "../../../../outside.md",
     ]) {
       await expect(

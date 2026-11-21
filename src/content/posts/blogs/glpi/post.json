@@ -1,0 +1,12 @@
+{
+  "date": "2026-11-21",
+  "category": "blogs",
+  "tags": [
+    "Infrastructure/IT service management/GLPI"
+  ],
+  "cover": "notes",
+  "coverImage": "/images/glpi.svg",
+  "featured": true,
+  "draft": false,
+  "slug": "glpi"
+}

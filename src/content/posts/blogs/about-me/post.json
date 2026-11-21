@@ -1,0 +1,16 @@
+{
+  "date": "2026-11-21",
+  "category": "blogs",
+  "tags": [],
+  "cover": "notes",
+  "featured": true,
+  "slug": "about-me",
+  "media": [
+    {
+      "id": "media-1",
+      "type": "image",
+      "src": "/images/tajdang-avatar.png"
+    }
+  ],
+  "coverImage": "/images/taj-portrait.png"
+}

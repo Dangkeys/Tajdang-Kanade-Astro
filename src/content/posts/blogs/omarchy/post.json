@@ -1,0 +1,13 @@
+{
+  "date": "2026-11-21",
+  "category": "blogs",
+  "tags": [
+    "Linux/Omarchy",
+    "Linux/Hyprland"
+  ],
+  "cover": "notes",
+  "coverImage": "/images/omarchy.svg",
+  "featured": true,
+  "draft": false,
+  "slug": "omarchy"
+}

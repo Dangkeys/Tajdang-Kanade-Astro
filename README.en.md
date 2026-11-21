@@ -104,44 +104,70 @@ The configured favicon should remain an SVG because the layout declares its MIME
 
 ## Write posts
 
-Create `src/content/posts/en/my-first-post.md`:
+## Write EN and TH posts
 
-```markdown
+Each post has one folder with shared metadata and two translations:
+
+```text
+src/content/posts/blogs/my-post/
+  post.json
+  en.md
+  th.md
+```
+
+Edit `post.json` once for both languages:
+
+```json
+{
+  "slug": "my-post",
+  "date": "2026-11-21",
+  "category": "blogs",
+  "tags": ["Infrastructure/Homelab"],
+  "cover": "notes",
+  "featured": false,
+  "draft": true
+}
+```
+
+The `slug` controls both URLs: `/posts/my-post/` and `/th/posts/my-post/`. Moving the folder or changing the category does not change these URLs. Keep slugs unique across categories.
+
+In `en.md` and `th.md`, keep only translated frontmatter and the body:
+
+```md
 ---
-title: "My first post"
-description: "A short summary for lists, search, and metadata."
-date: 2026-09-20
-lang: en
-category: notes
-tags: ["Astro", "Blogging"]
-cover: notes
-featured: false
-draft: false
+title: "My post"
+description: "A short description."
 ---
 
 ## Start here
 
-Write something you want to keep.
+Write your post here.
 ```
 
-This produces `/posts/my-first-post/` when English is selected. Japanese posts go in `src/content/posts/ja/` with `lang: ja`. Chinese posts can stay at the content root with `lang: zh-CN` (the default). The language directory is removed from the public post URL. Use matching filenames for translated versions and keep filenames unique within each language.
+Set `draft` to `false` in `post.json` to show both translations. Set `featured` to `true` to pin them. Categories are `blogs`, `projects`, `work-experience`, and `activities`. Tag paths such as `Infrastructure/Networking/Containerlab` create nested filters automatically.
 
-Only published posts whose `lang` matches the selected language appear in pages, search, RSS, and the sitemap. Missing translations are not replaced with Chinese posts. All languages are validated during a build. Files beginning with `_` are excluded from the content collection.
+For a card cover, add `"coverImage": "/images/my-cover.png"` to `post.json`. Otherwise, the card uses the first gallery image or the icon selected by `cover`.
 
-| Field                   | Required | Meaning                                            |
-| ----------------------- | -------- | -------------------------------------------------- |
-| `title` / `description` | Yes      | Title and summary                                  |
-| `date`                  | Yes      | Publication date, preferably `YYYY-MM-DD`          |
-| `lang`                  | No       | `zh-CN`, `en`, or `ja`; defaults to `zh-CN`        |
-| `category`              | Yes      | `frontend`, `notes`, or `life`                     |
-| `tags`                  | Yes      | Array of labels; may be empty                      |
-| `cover`                 | Yes      | One of the cover styles below                      |
-| `featured`              | No       | Featured badge and cover; defaults to `false`      |
-| `draft`                 | No       | Exclude from published output; defaults to `false` |
+For a gallery, put the files in `public/images/` and add shared assets to `post.json`:
 
-Cover styles: `astro`, `vue`, `css`, `notes`, `life`, `typescript`, `git`, `design`. Categories use stable IDs and display translated labels. Existing Chinese category names remain accepted for compatibility. Tags and article bodies come from each Markdown file.
+```json
+"media": [
+  { "id": "photo", "type": "image", "src": "/images/my-photo.png" }
+]
+```
 
-Posts are sorted newest first; `featured` changes presentation, not sorting. Reading time is estimated at 200 words per minute for English, 400 characters for Chinese, and 500 characters for Japanese. Search covers summaries and labels rather than entire article bodies.
+Add translated image descriptions and optional captions in each language file:
+
+```yaml
+mediaText:
+  photo:
+    alt: "My homelab"
+    caption: "The lab on my desk."
+```
+
+Keep media IDs stable when reordering images. Video, YouTube, and embed entries use a translated `title` instead of `alt`. Asset URLs and ordering stay in `post.json`; descriptions and captions stay in Markdown.
+
+Markdown images also work inside the body: `![My lab](/images/my-photo.png)`. Link between notes using their relative file paths, for example `[Advisory](../../projects/advisory/en.md)`. The site converts these to public post URLs, and the same paths work in Obsidian.
 
 ## Local fonts
 

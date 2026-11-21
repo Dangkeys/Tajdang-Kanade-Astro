@@ -1,4 +1,3 @@
-import { readFileSync } from "node:fs";
 import {
   basename,
   dirname,
@@ -8,10 +7,10 @@ import {
   sep,
 } from "node:path";
 import { fileURLToPath } from "node:url";
-import { parseFrontmatter } from "astro/markdown";
 import type { SatteriProcessorOptions } from "@astrojs/markdown-satteri";
 import { slug } from "github-slugger";
-import { getPostEntryId, getPostId } from "./post-paths";
+import { getPostId } from "./post-paths";
+import { readPost } from "./post-metadata";
 
 export function relativePostLinks({
   postsDirectory = resolve("src/content/posts"),
@@ -41,31 +40,22 @@ export function relativePostLinks({
         `${source}: Markdown link "${url}" must point to a published note inside src/content/posts.`,
       );
     }
-    let contents: string;
+    let post: ReturnType<typeof readPost>;
     try {
-      contents = readFileSync(target, "utf8");
+      post = readPost(target);
     } catch (error) {
       throw new Error(
         `${source}: Cannot resolve Markdown link "${url}" to ${target}.`,
         { cause: error },
       );
     }
-    const data: Record<string, unknown> =
-      parseFrontmatter(contents).frontmatter;
-    const lang = data.lang ?? "en";
-    if (
-      (lang !== "en" && lang !== "th") ||
-      typeof data.category !== "string" ||
-      data.draft === true
-    ) {
+    const { lang } = post.data;
+    if (post.data.draft) {
       throw new Error(
         `${source}: Markdown link "${url}" targets a draft or invalid post.`,
       );
     }
-    const id = getPostId({
-      id: getPostEntryId({ entry, slug: data.slug }),
-      data: { lang, category: data.category },
-    });
+    const id = getPostId(post);
     const path = `${lang === "th" ? "/th" : ""}/posts/${id.split("/").map(encodeURIComponent).join("/")}/`;
     const query = queryAt < 0 ? "" : beforeHash.slice(queryAt);
     // Obsidian uses heading text; Astro generates GitHub-style heading IDs.

@@ -1,0 +1,22 @@
+{
+  "date": "2026-11-21",
+  "category": "projects",
+  "tags": [
+    "Mobile/React Native",
+    "Backend/Supabase",
+    "Backend/Stripe",
+    "Mobile/Daily.co",
+    "University/Final project"
+  ],
+  "cover": "design",
+  "featured": true,
+  "draft": false,
+  "slug": "advisory",
+  "media": [
+    {
+      "id": "media-1",
+      "type": "image",
+      "src": "/images/advisory.png"
+    }
+  ]
+}
