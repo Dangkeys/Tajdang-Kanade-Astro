@@ -59,15 +59,19 @@ const emit = defineEmits<{ toggle: [path: string] }>();
   display: flex;
   flex-wrap: wrap;
   align-items: flex-start;
-  gap: 10px;
+  gap: 8px;
   padding: 0;
   margin: 14px 0 0;
 }
 .branch {
+  min-width: 0;
+  max-width: 100%;
+}
+.branch:has(> .subtag-children) {
   flex-basis: 100%;
 }
 .branch > .tag-row > .chip {
-  font-weight: 600;
+  font-weight: 500;
 }
 .subtag-children {
   border-left: 1px solid var(--line);

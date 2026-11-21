@@ -30,8 +30,11 @@ const {
 } = Astro.props;
 const t = translator(lang);
 const canonical = new URL(Astro.url.pathname, siteInfo.url);
-const alternate =
-  lang === "th"
+const alternate = noindex
+  ? lang === "th"
+    ? "/"
+    : "/th/"
+  : lang === "th"
     ? Astro.url.pathname.replace(/^\/th/, "") || "/"
     : `/th${Astro.url.pathname}`;
 ---
@@ -148,6 +151,42 @@ const alternate =
     </footer>
     <script>
       import { toggleTheme } from "../scripts/theme";
+      if (import.meta.hot) {
+        import.meta.hot.on("vite:beforeFullReload", () => {
+          history.replaceState(
+            {
+              ...history.state,
+              scrollX: window.scrollX,
+              scrollY: window.scrollY,
+              tajdangPreviewReload: location.href,
+            },
+            "",
+          );
+        });
+        window.addEventListener(
+          "load",
+          () => {
+            const state = history.state;
+            if (
+              state?.tajdangPreviewReload !== location.href ||
+              typeof state.scrollX !== "number" ||
+              typeof state.scrollY !== "number"
+            )
+              return;
+            const { tajdangPreviewReload, ...rest } = state;
+            history.replaceState(rest, "");
+            requestAnimationFrame(() =>
+              window.scrollTo({
+                left: state.scrollX,
+                top: state.scrollY,
+                behavior: "instant",
+              }),
+            );
+          },
+          { once: true },
+        );
+      }
+
       document.addEventListener("astro:page-load", () => {
         document
           .querySelector(".theme-control")

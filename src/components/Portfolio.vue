@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, useId, nextTick } from "vue";
+import { computed, onMounted, ref, useId, nextTick, watch } from "vue";
 import { translator, homePath, type Language } from "../i18n";
 import type { PostSummary } from "../lib/posts";
 import { personalInfo } from "../config";
@@ -16,20 +16,16 @@ const t = translator(props.lang);
 const home = homePath(props.lang);
 const th = props.lang === "th";
 const query = ref("");
+const page = ref(1);
+const pageSize = 4;
+const feedStart = ref<HTMLElement>();
 const searchFocused = ref(false);
 const activeSuggestion = ref(-1);
 const suggestionList = ref<HTMLElement>();
 const suggestionListId = `${useId()}-suggestions`;
 type Suggestion =
   | { kind: "post"; label: string; detail: string; href: string; key: string }
-  | { kind: "tag"; label: string; detail: string; path: string; key: string }
-  | {
-      kind: "category";
-      label: string;
-      detail: string;
-      category: string;
-      key: string;
-    };
+  | { kind: "tag"; label: string; detail: string; path: string; key: string };
 const category = ref("");
 const selectedTags = ref<string[]>([]);
 const tagMatch = ref<"any" | "all">("any");
@@ -97,6 +93,36 @@ const filtered = computed(() =>
         .includes(query.value.trim().toLowerCase()),
   ),
 );
+const pageCount = computed(() =>
+  Math.max(1, Math.ceil(filtered.value.length / pageSize)),
+);
+const currentPage = computed(() => Math.min(page.value, pageCount.value));
+const displayed = computed(() =>
+  filtered.value.slice(
+    (currentPage.value - 1) * pageSize,
+    currentPage.value * pageSize,
+  ),
+);
+watch(
+  [query, category, selectedTags, tagMatch],
+  () => {
+    page.value = 1;
+  },
+  { flush: "sync" },
+);
+function changePage(value: number) {
+  page.value = Math.max(1, Math.min(value, pageCount.value));
+  sync();
+  closeSuggestions();
+  nextTick(() =>
+    feedStart.value?.scrollIntoView({
+      block: "start",
+      behavior: matchMedia("(prefers-reduced-motion: reduce)").matches
+        ? "instant"
+        : "smooth",
+    }),
+  );
+}
 const suggestions = computed<Suggestion[]>(() => {
   const needle = query.value.trim().toLowerCase();
   const posts: Suggestion[] = categoryPosts.value
@@ -112,15 +138,6 @@ const suggestions = computed<Suggestion[]>(() => {
       detail: `${th ? "บทความ" : "Post"} · ${categoryTitle(post.category)}`,
       href: `${home}posts/${post.id}/`,
       key: `post:${post.id}`,
-    }));
-  const categories: Suggestion[] = groups
-    .filter((group) => labels[group].toLowerCase().includes(needle))
-    .map((group) => ({
-      kind: "category",
-      label: labels[group],
-      detail: th ? "หมวดหมู่" : "Category",
-      category: group,
-      key: `category:${group}`,
     }));
   const paths = new Set<string>();
   categoryPosts.value.forEach((post) =>
@@ -144,7 +161,7 @@ const suggestions = computed<Suggestion[]>(() => {
       path,
       key: `tag:${path}`,
     }));
-  return [...posts, ...categories, ...tags].slice(0, 8);
+  return [...posts, ...(needle ? tags : [])].slice(0, 8);
 });
 const showSuggestions = computed(() => searchFocused.value);
 function closeSuggestions() {
@@ -193,7 +210,7 @@ function applySuggestion(suggestion: Suggestion) {
   if (suggestion.kind === "tag") {
     selectedTags.value = [...new Set([...selectedTags.value, suggestion.path])];
     sync();
-  } else if (suggestion.kind === "category") choose(suggestion.category);
+  }
   closeSuggestions();
 }
 function categoryTitle(value: string) {
@@ -205,13 +222,14 @@ function sync() {
   const url = new URL(window.location.href);
   for (const [key, value] of Object.entries({
     q: query.value,
+    page: currentPage.value > 1 ? String(currentPage.value) : "",
     category: category.value,
     match: tagMatch.value === "all" ? "all" : "",
   }))
     value ? url.searchParams.set(key, value) : url.searchParams.delete(key);
   url.searchParams.delete("tag");
   selectedTags.value.forEach((tag) => url.searchParams.append("tag", tag));
-  window.history.replaceState(null, "", url);
+  window.history.replaceState(window.history.state, "", url);
 }
 function choose(value: string) {
   category.value = value;
@@ -239,6 +257,11 @@ function readUrl() {
   category.value =
     requestedCategory === "skills" ? "personal" : requestedCategory;
   selectedTags.value = [...new Set(params.getAll("tag"))];
+  const requestedPage = Number(params.get("page"));
+  page.value =
+    Number.isInteger(requestedPage) && requestedPage > 0
+      ? Math.min(requestedPage, pageCount.value)
+      : 1;
 }
 onMounted(() => readUrl());
 </script>
@@ -271,23 +294,23 @@ onMounted(() => readUrl());
         </div>
       </section>
     </aside>
-    <section class="portfolio-work" aria-labelledby="work-title">
+    <section
+      ref="feedStart"
+      class="portfolio-work"
+      aria-labelledby="work-title"
+    >
       <div class="portfolio-intro">
         <span class="eyebrow">{{
-          th ? "ผลงานและบันทึกการเรียนรู้" : "WORK & FIELD NOTES"
+          th ? "เรื่องเล่าจากมุมของผม" : "A LITTLE BIT OF TAJDANG"
         }}</span>
         <h2 id="work-title">
-          {{
-            th
-              ? "สิ่งที่ผมทำ และสิ่งที่ได้เรียนรู้"
-              : "What I build. What I learn."
-          }}
+          {{ th ? "ช่วงนี้ผมทำอะไรบ้าง" : "What I’m up to" }}
         </h2>
         <p class="muted">
           {{
             th
-              ? "โปรเจกต์ ประสบการณ์ และเรื่องที่กำลังเรียนรู้ รวมไว้ในที่เดียว"
-              : "Projects, experience, and things I’m figuring out, all in one place."
+              ? "งานที่เคยทำ โปรเจกต์ที่กำลังลอง และเรื่องนอกจอของผม"
+              : "Software, games, homelab experiments, and life away from the keyboard."
           }}
         </p>
       </div>
@@ -318,9 +341,7 @@ onMounted(() => readUrl());
             "
             :aria-label="th ? 'ค้นหาผลงาน' : 'Search my work'"
             :placeholder="
-              th
-                ? 'ค้นหาอะไรดีน้าาา'
-                : 'Search projects, skills, or a topic…'
+              th ? 'ค้นหาอะไรดีน้าาา' : 'Search projects, skills, or a topic…'
             "
         /></label>
         <Transition name="suggestions"
@@ -336,17 +357,26 @@ onMounted(() => readUrl());
               {{
                 query.trim()
                   ? th
-                    ? "ผลการค้นหาและแท็กที่เกี่ยวข้อง"
-                    : "Matching posts & topics"
+                    ? "ผลการค้นหา"
+                    : "Search results"
                   : th
-                    ? "ลองสำรวจหัวข้อเหล่านี้"
-                    : "Explore something"
+                    ? "โพสต์ล่าสุด"
+                    : "Recent posts"
               }}
             </p>
             <template
               v-for="(suggestion, position) in suggestions"
               :key="suggestion.key"
             >
+              <p
+                v-if="
+                  suggestion.kind === 'tag' &&
+                  suggestions[position - 1]?.kind !== 'tag'
+                "
+                class="suggestion-section"
+              >
+                {{ th ? "กรองตามหัวข้อ" : "Filter by topic" }}
+              </p>
               <a
                 v-if="suggestion.kind === 'post'"
                 :id="`${suggestionListId}-${position}`"
@@ -526,7 +556,7 @@ onMounted(() => readUrl());
         aria-live="polite"
       >
         <article
-          v-for="post in filtered"
+          v-for="post in displayed"
           :key="post.id"
           class="card portfolio-post"
         >
@@ -565,13 +595,13 @@ onMounted(() => readUrl());
         <div v-if="!filtered.length" key="empty" class="card empty-state">
           <span class="icon-[lucide--sprout]" aria-hidden="true"></span>
           <h3>
-            {{ th ? "ยังไม่มีโพสต์ในหัวข้อนี้" : "Nothing here just yet" }}
+            {{ th ? "ไม่เจอโพสต์ที่ตรงกับตัวกรอง" : "No matching posts" }}
           </h3>
           <p>
             {{
               th
-                ? "กำลังค่อย ๆ รวบรวมผลงาน ลองดูหัวข้ออื่นได้ครับ"
-                : "I’m still collecting my work. Try another topic or check back soon."
+                ? "ลองเปลี่ยนคำค้นหาหรือล้างตัวกรองครับ"
+                : "Try a different search or clear the filters."
             }}
           </p>
           <button class="btn secondary" @click="reset">
@@ -579,6 +609,36 @@ onMounted(() => readUrl());
           </button>
         </div>
       </TransitionGroup>
+      <nav
+        v-if="pageCount > 1"
+        class="feed-pagination"
+        :aria-label="th ? 'หน้าโพสต์' : 'Post pages'"
+      >
+        <button
+          type="button"
+          :disabled="currentPage === 1"
+          @click="changePage(currentPage - 1)"
+        >
+          {{ th ? "ก่อนหน้า" : "Previous" }}
+        </button>
+        <button
+          v-for="number in pageCount"
+          :key="number"
+          type="button"
+          :aria-current="currentPage === number ? 'page' : undefined"
+          :class="{ selected: currentPage === number }"
+          @click="changePage(number)"
+        >
+          {{ number }}
+        </button>
+        <button
+          type="button"
+          :disabled="currentPage === pageCount"
+          @click="changePage(currentPage + 1)"
+        >
+          {{ th ? "ถัดไป" : "Next" }}
+        </button>
+      </nav>
     </section>
     <aside class="portfolio-right">
       <figure class="card portrait-card">
@@ -1631,5 +1691,47 @@ onMounted(() => readUrl());
 .portfolio-profile,
 .portfolio-right {
   min-width: 0;
+}
+</style>
+
+<style scoped>
+.feed-pagination {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 24px;
+}
+.feed-pagination button {
+  min-width: 38px;
+  min-height: 38px;
+  padding: 7px 12px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: var(--card);
+  color: var(--text);
+  font-size: 14px;
+}
+.feed-pagination button:hover:not(:disabled) {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+.feed-pagination button.selected {
+  background: var(--accent);
+  color: var(--on-accent);
+  border-color: var(--accent);
+}
+.portfolio-work {
+  scroll-margin-top: 24px;
+}
+</style>
+
+<style scoped>
+.suggestion-section {
+  margin: 8px 10px 4px;
+  padding-top: 10px;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 12px;
 }
 </style>

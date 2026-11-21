@@ -44,8 +44,15 @@ function readingMinutes(body: string, lang: string): number {
   return Math.max(1, Math.ceil(length / rate));
 }
 export function getPostId(post: CollectionEntry<"posts">): string {
-  const prefix = `${post.data.lang.toLowerCase()}/`;
-  return post.id.startsWith(prefix) ? post.id.slice(prefix.length) : post.id;
+  const languagePrefix = `${post.data.lang.toLowerCase()}/`;
+  const path = post.id.startsWith(languagePrefix)
+    ? post.id.slice(languagePrefix.length)
+    : post.id;
+  // Category folders organize source files without changing public URLs.
+  const categoryPrefix = `${post.data.category}/`;
+  return path.startsWith(categoryPrefix)
+    ? path.slice(categoryPrefix.length)
+    : path;
 }
 export function getTags(posts: PostSummary[]) {
   return [...new Set(posts.flatMap((post) => post.tags))];
