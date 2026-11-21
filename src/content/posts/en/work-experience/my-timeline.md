@@ -13,7 +13,7 @@ featured: true
 
 I joined SAIG and became a Game Session Leader, helping coordinate sessions and support other members.
 
-[SAIG game sessions](../saig/)
+[SAIG game sessions](../activities/saig.md)
 
 ## May to July 2024: PetNMed
 
@@ -31,7 +31,7 @@ PetNMed and Essentia
 
 I worked on an Expo / React Native consultation app during my internship associated with BKBIET in Pilani, India.
 
-[BKBIET internship](../bkbiet-internship/)
+[BKBIET internship](./bkbiet-internship.md)
 
 ## September 2025: HoraHub
 

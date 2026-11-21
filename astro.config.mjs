@@ -4,6 +4,8 @@ import sitemap from "@astrojs/sitemap";
 import vue from "@astrojs/vue";
 import tailwindcss from "@tailwindcss/vite";
 import { loadEnv } from "vite";
+import { satteri } from "@astrojs/markdown-satteri";
+import { relativePostLinks } from "./src/lib/relative-post-links";
 
 const { SITE_URL = "http://localhost:4321" } = loadEnv(
   process.env.NODE_ENV ?? "production",
@@ -28,6 +30,9 @@ if (
 export default defineConfig({
   site: site.href,
   output: "static",
+  markdown: {
+    processor: satteri({ mdastPlugins: relativePostLinks() }),
+  },
   trailingSlash: "always",
   // Preserve the spacing between inline elements when migrating from Astro 5.
   compressHTML: true,

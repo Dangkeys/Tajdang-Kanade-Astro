@@ -9,8 +9,14 @@ import {
 import { postMediaSchema } from "./lib/media";
 import { languages } from "./i18n";
 
+import { getPostEntryId } from "./lib/post-paths";
+
 const posts = defineCollection({
-  loader: glob({ pattern: "**/[^_]*.md", base: "./src/content/posts" }),
+  loader: glob({
+    pattern: "**/[^_]*.md",
+    base: "./src/content/posts",
+    generateId: ({ entry, data }) => getPostEntryId({ entry, slug: data.slug }),
+  }),
   schema: z.object({
     title: z.string().trim().min(1),
     description: z.string().trim().min(1),

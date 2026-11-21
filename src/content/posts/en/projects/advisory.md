@@ -18,7 +18,7 @@ media:
 
 Advisory connects people looking for advice with advisors who offer their expertise. The app brings advisor discovery, schedules, bookings, payments, and video calls into one flow.
 
-I started working on it during my [internship at BKBIET in Pilani, India](../bkbiet-internship/). I am also using Advisory as my final project.
+I started working on it during my [internship at BKBIET in Pilani, India](../work-experience/bkbiet-internship.md). I am also using Advisory as my final project.
 
 ## My work
 

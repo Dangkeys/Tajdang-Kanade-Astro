@@ -17,7 +17,7 @@ I completed my summer industrial training at B. K. Birla Institute of Engineerin
 
 ## What I worked on
 
-My main project was [Advisory](../advisory/), an app connecting advisors and people seeking advice. The work included researching similar platforms, wireframes, development with Expo / React Native and Supabase, testing, and documentation.
+My main project was [Advisory](../projects/advisory.md), an app connecting advisors and people seeking advice. The work included researching similar platforms, wireframes, development with Expo / React Native and Supabase, testing, and documentation.
 
 The app has its own project page. Here I want to write about the internship, the people I worked with, and living in Pilani.
 

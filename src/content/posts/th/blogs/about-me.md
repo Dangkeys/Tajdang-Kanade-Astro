@@ -20,14 +20,4 @@ media:
 
 ## สวัสดีครับ ผม Tajdang
 
-ผมชื่อธรรศนะครับ หรือเรียกTajdangก็ได้ครับ  ตอนนี้้ผมศึกษาอยู่ที่วิศวกรรมคอมพิวเตอร์ที่ลาดกระบัง และทำงานเป็น Presales Network Engineer
-
-เคยทำ Backend กับแอปมือถือให้ [Advisory](../advisory/), HoraHub, Essentia และ PetNMed อีกฝั่งก็ทำเกมด้วย Unity และเคยช่วยจัด session พัฒนาเกมที่ [SAIG](../saig/)
-
-## นอกเวลางาน
-
-ผมชอบทำ homelab ลองเทคโนโลยี เล่นหมากรุก ไปยิม แล้วก็อ่านหนังสือครับ
-
-## ติดต่อผม
-
-[GitHub](https://github.com/Dangkeys) · [LinkedIn](https://www.linkedin.com/in/taj-dangkomen-5319b03a3/) · [Instagram](https://www.instagram.com/t_tajdang/) · [อีเมล](mailto:taj.dangkomen@gmail.com)
+ผมชื่อธรรศนะครับ หรือชื่อในวงการ(ตั้งเอง)คือTajdang  ตอนนี้ผมศึกษาอยู่ที่สถาบันพระจอมเกล้าคุณทหารลาดกระบัง สาขาวิศวกรรมคอมพิวเตอร์อยู่ชั้นปีที่4 และปัจจุบันก็ทำงานเป็น Presales Network Engineer ที่บริษัทComnetด้วยครับ ผมต้องพูดอะไรต่อนะ55555+ เอาเป็นผมก็หม่แน่ใจเหมือนกันแต่ถ้าหากว่าทุกคนอยากดูtimeline ผมแบบละเอียดก

@@ -13,7 +13,7 @@ featured: true
 
 ผมเข้าร่วม SAIG และเป็น Game Session Leader ช่วยจัด session และช่วยเพื่อนสมาชิกเรื่องเทคนิค
 
-[กิจกรรม SAIG](../saig/)
+[กิจกรรม SAIG](../activities/saig.md)
 
 ## พฤษภาคมถึงกรกฎาคม 2024: PetNMed
 
@@ -31,7 +31,7 @@ PetNMed และ Essentia
 
 ทำแอปให้คำปรึกษาด้วย Expo / React Native ในการฝึกงานที่เกี่ยวข้องกับ BKBIET เมือง Pilani ประเทศอินเดีย
 
-[ฝึกงานที่ BKBIET](../bkbiet-internship/)
+[ฝึกงานที่ BKBIET](./bkbiet-internship.md)
 
 ## กันยายน 2025: HoraHub
 
