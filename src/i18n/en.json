@@ -107,7 +107,7 @@
   "article.back": "Back to home",
   "article.readingTime": "About {count} min",
   "article.toc": "On this page",
-  "article.thanks": "Thanks for reading. Find more of my work on the home page.",
+  "article.thanks": "Thanks for reading.",
   "article.share": "Copy post link",
   "article.shared": "Link copied. Share it with someone who enjoys a good story.",
   "article.shareFallback": "Please copy this link: {url}",

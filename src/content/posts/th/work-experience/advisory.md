@@ -6,7 +6,11 @@ lang: "th"
 category: "work-experience"
 cover: "design"
 tags: ["Mobile/React Native", "Backend/Supabase", "Backend/Stripe", "Mobile/Daily.co"]
-featured: false
+featured: true
+media:
+  - type: image
+    src: /images/advisory.png
+    alt: Advisory app welcome and sign-up screens
 ---
 
 ## งานที่ผมทำ

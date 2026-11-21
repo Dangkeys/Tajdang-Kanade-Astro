@@ -6,7 +6,7 @@ lang: en
 category: blogs
 cover: notes
 tags: []
-featured: false
+featured: true
 media:
   - type: image
     src: /images/taj-portrait.png

@@ -5,7 +5,7 @@ date: 2026-11-21
 lang: th
 category: blogs
 cover: notes
-tags: ["History"]
+tags: ["Bitcoin/Part 1", "Money/History", "Money/Inflation", "Money/Banking", "Money/Gold", "Money/Central banks"]
 featured: false
 ---
 

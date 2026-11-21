@@ -6,7 +6,7 @@ lang: "th"
 category: "activities"
 cover: "design"
 tags: ["Activities/SAIG", "Game development", "Activities/Teamwork"]
-featured: false
+featured: true
 ---
 
 ## Game Session Leader
