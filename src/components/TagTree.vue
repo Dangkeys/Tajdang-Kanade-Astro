@@ -1,25 +1,8 @@
 <script setup lang="ts">
-import { ref, useId } from "vue";
-import type { Language } from "../i18n";
+import { useId } from "vue";
 import type { TagNode } from "../lib/tags";
-const props = defineProps<{
-  nodes: TagNode[];
-  selected: string[];
-  lang?: Language;
-}>();
-const expanded = ref<string[]>([]);
+defineProps<{ nodes: TagNode[]; selected: string[] }>();
 const treeId = useId();
-function toggleBranch(path: string) {
-  expanded.value = expanded.value.includes(path)
-    ? expanded.value.filter((value) => value !== path)
-    : [...expanded.value, path];
-}
-function expandLabel(path: string) {
-  const open = expanded.value.includes(path);
-  return props.lang === "th"
-    ? `${open ? "ซ่อน" : "แสดง"}แท็กย่อยของ ${path.split("/").join(" › ")}`
-    : `${open ? "Hide" : "Show"} subtags under ${path.split("/").join(" › ")}`;
-}
 const emit = defineEmits<{ toggle: [path: string] }>();
 </script>
 
@@ -35,38 +18,33 @@ const emit = defineEmits<{ toggle: [path: string] }>();
           class="chip"
           :class="{ picked: selected.includes(node.path) }"
           :aria-pressed="selected.includes(node.path)"
+          :aria-expanded="
+            node.children.length ? selected.includes(node.path) : undefined
+          "
+          :aria-controls="
+            node.children.length ? `${treeId}-${index}` : undefined
+          "
           :title="node.path.split('/').join(' › ')"
           @click="emit('toggle', node.path)"
         >
           {{ selected.includes(node.path) ? "✓ " : "+ " }}{{ node.label }}
-        </button>
-        <button
-          v-if="node.children.length"
-          class="subtag-toggle"
-          :aria-expanded="expanded.includes(node.path)"
-          :aria-controls="`${treeId}-${index}`"
-          :aria-label="expandLabel(node.path)"
-          :title="expandLabel(node.path)"
-          @click="toggleBranch(node.path)"
-        >
-          <span class="child-count">{{ node.children.length }}</span
-          ><span
+          <span
+            v-if="node.children.length"
             class="subtag-chevron icon-[lucide--chevron-right]"
-            :class="{ expanded: expanded.includes(node.path) }"
+            :class="{ expanded: selected.includes(node.path) }"
             aria-hidden="true"
           ></span>
         </button>
       </div>
       <Transition name="subtags">
         <div
-          v-if="node.children.length && expanded.includes(node.path)"
+          v-if="node.children.length && selected.includes(node.path)"
           :id="`${treeId}-${index}`"
           class="subtag-children"
         >
           <TagTree
             :nodes="node.children"
             :selected="selected"
-            :lang="lang"
             @toggle="emit('toggle', $event)"
           />
         </div>
@@ -112,29 +90,14 @@ const emit = defineEmits<{ toggle: [path: string] }>();
   align-items: center;
   gap: 5px;
 }
-.subtag-toggle {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  min-height: 32px;
-  padding: 4px 7px;
-  background: transparent;
-  color: var(--muted);
-  border: 1px solid var(--line);
-  border-radius: 7px;
-}
-.subtag-toggle:hover {
-  color: var(--accent);
-  border-color: var(--accent);
-}
 .subtag-chevron {
+  display: inline-block;
+  vertical-align: middle;
+  margin-left: 5px;
   transition: transform 0.18s;
 }
-.subtag-toggle .expanded {
+.subtag-chevron.expanded {
   transform: rotate(90deg);
-}
-.child-count {
-  font-size: 12px;
 }
 .subtags-enter-active,
 .subtags-leave-active {

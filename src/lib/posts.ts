@@ -21,7 +21,11 @@ export async function getPosts(lang: Language = language) {
       "posts",
       ({ data }) => !data.draft && data.lang === lang,
     )
-  ).sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+  ).sort(
+    (a, b) =>
+      Number(b.data.featured) - Number(a.data.featured) ||
+      b.data.date.valueOf() - a.data.date.valueOf(),
+  );
 }
 export function summarize(post: CollectionEntry<"posts">): PostSummary {
   return {

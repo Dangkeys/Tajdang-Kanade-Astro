@@ -14,6 +14,32 @@ const query = ref("");
 const category = ref("");
 const selectedTags = ref<string[]>([]);
 const tagMatch = ref<"any" | "all">("any");
+const quoteIndex = ref(0);
+const quotes = [
+  {
+    en: "Keep learning. Keep building. One small step at a time.",
+    th: "ค่อย ๆ เรียนรู้ แล้วลงมือทำทีละอย่าง",
+  },
+  {
+    en: "Understand the problem before reaching for a tool.",
+    th: "เข้าใจปัญหาให้ชัด ก่อนเลือกเครื่องมือ",
+  },
+  {
+    en: "A small thing that works is a good place to start.",
+    th: "เริ่มจากสิ่งเล็ก ๆ ที่ใช้งานได้จริง",
+  },
+  {
+    en: "Stay curious about the things you use every day.",
+    th: "อย่าหยุดสงสัยในสิ่งที่ใช้ทุกวัน",
+  },
+];
+const currentQuote = computed(() => {
+  const quote = quotes[quoteIndex.value % quotes.length];
+  return th ? quote?.th : quote?.en;
+});
+function nextQuote() {
+  quoteIndex.value = (quoteIndex.value + 1) % quotes.length;
+}
 const groups = [
   "personal",
   "projects",
@@ -21,7 +47,7 @@ const groups = [
   "activities",
 ] as const;
 const labels = {
-  personal: th ? "เกี่ยวกับผม" : "About me",
+  personal: t("category.personal"),
   projects: t("category.projects"),
   "work-experience": t("category.work-experience"),
   activities: t("category.activities"),
@@ -32,11 +58,7 @@ const categoryPosts = computed(() =>
   ),
 );
 const tagTree = computed(() =>
-  buildTagTree(
-    categoryPosts.value
-      .filter((post) => post.category !== "personal")
-      .flatMap((post) => post.tags),
-  ),
+  buildTagTree(categoryPosts.value.flatMap((post) => post.tags)),
 );
 const filtered = computed(() =>
   categoryPosts.value.filter(
@@ -101,7 +123,12 @@ onMounted(() => readUrl());
     <aside class="portfolio-profile">
       <section class="card profile">
         <span class="eyebrow">{{ t("author.eyebrow") }}</span>
-        <img :src="personalInfo.avatar" alt="Tajdang" width="88" height="88" />
+        <a
+          class="avatar-link"
+          :href="`${home}posts/about-me/`"
+          :aria-label="th ? 'รู้จัก Tajdang' : 'About Tajdang'"
+          ><img :src="personalInfo.avatar" alt="Tajdang" width="88" height="88"
+        /></a>
         <h2>Tajdang<span class="accent">.</span></h2>
         <p class="role">{{ t("author.role") }}</p>
         <p class="muted">{{ t("author.bio") }}</p>
@@ -114,19 +141,12 @@ onMounted(() => readUrl());
             :key="link.url"
             :href="link.url"
             :aria-label="link.name"
-            target="_blank"
+            :title="link.name"
+            :target="link.url.startsWith('https:') ? '_blank' : undefined"
             rel="noopener noreferrer"
             ><span :class="link.icon" aria-hidden="true"></span
-            >{{ link.name }}</a
-          >
+          ></a>
         </div>
-        <p class="profile-note">
-          {{
-            th
-              ? "กำลังมองหาโอกาสฝึกงานด้าน Infrastructure"
-              : "Looking for an infrastructure internship"
-          }}
-        </p>
       </section>
     </aside>
     <section class="portfolio-work" aria-labelledby="work-title">
@@ -183,7 +203,6 @@ onMounted(() => readUrl());
         </button>
       </div>
       <details
-        v-if="category !== 'personal'"
         :key="category"
         class="card category-skills"
         :aria-label="th ? 'กรองตามทักษะ' : 'Filter by skills'"
@@ -233,7 +252,6 @@ onMounted(() => readUrl());
           <TagTree
             :nodes="tagTree"
             :selected="selectedTags"
-            :lang="lang"
             @toggle="chooseTag"
           />
         </div>
@@ -279,7 +297,12 @@ onMounted(() => readUrl());
             ><PostCover :kind="post.cover" :lang="lang"
           /></a>
           <div class="post-copy">
-            <span class="eyebrow">{{ categoryTitle(post.category) }}</span>
+            <div class="post-kicker">
+              <span v-if="post.featured" class="starred-post"
+                ><span class="icon-[lucide--star]" aria-hidden="true"></span
+                >{{ th ? "ปักหมุด" : "Pinned" }}</span
+              ><span class="eyebrow">{{ categoryTitle(post.category) }}</span>
+            </div>
             <h3>
               <a :href="`${home}posts/${post.id}/`">{{ post.title }}</a>
             </h3>
@@ -319,13 +342,18 @@ onMounted(() => readUrl());
     </section>
     <aside class="portfolio-right">
       <figure class="card portrait-card">
-        <img
-          src="/images/taj-portrait.png"
-          :alt="th ? 'ภาพถ่ายของ Tajdang' : 'Portrait of Tajdang'"
-          width="1108"
-          height="1477"
-          loading="lazy"
-        />
+        <a
+          class="portrait-link"
+          :href="`${home}posts/about-me/`"
+          :aria-label="th ? 'รู้จัก Tajdang' : 'About Tajdang'"
+        >
+          <img
+            src="/images/taj-portrait.png"
+            :alt="th ? 'ภาพถ่ายของ Tajdang' : 'Portrait of Tajdang'"
+            width="1108"
+            height="1477"
+            loading="lazy"
+        /></a>
         <figcaption>
           <span class="eyebrow">{{
             th ? "อีกมุมหนึ่งของผม" : "A LITTLE MORE ME"
@@ -339,19 +367,44 @@ onMounted(() => readUrl());
           </p>
         </figcaption>
       </figure>
-      <section class="card quote-card">
-        <span class="quote-mark" aria-hidden="true">“</span>
-        <blockquote>
-          {{
-            th
-              ? "ค่อย ๆ เรียนรู้ แล้วลงมือทำทีละอย่าง"
-              : "Keep learning. Keep building. One small step at a time."
-          }}
-        </blockquote>
-        <span class="eyebrow">{{
-          th ? "เตือนใจตัวเอง" : "A NOTE TO MYSELF"
-        }}</span>
-      </section>
+      <div class="quote-shell">
+        <section class="card quote-card">
+          <span
+            :key="`mark-${quoteIndex}`"
+            class="quote-mark"
+            aria-hidden="true"
+            >“</span
+          >
+          <span
+            :key="`spark-${quoteIndex}`"
+            class="quote-sparks"
+            aria-hidden="true"
+            ><span>✧</span><span>✦</span></span
+          >
+          <span
+            v-if="quoteIndex"
+            :key="`ripple-${quoteIndex}`"
+            class="quote-ripple"
+            aria-hidden="true"
+          ></span>
+          <div class="quote-content" aria-live="polite" aria-atomic="true">
+            <Transition name="quote" mode="out-in"
+              ><blockquote :key="quoteIndex">
+                {{ currentQuote }}
+              </blockquote></Transition
+            >
+          </div>
+          <span class="eyebrow">{{
+            th ? "เตือนใจตัวเอง" : "A NOTE TO MYSELF"
+          }}</span>
+          <button
+            class="quote-trigger"
+            type="button"
+            @click="nextQuote"
+            :aria-label="th ? 'อ่านข้อคิดถัดไป' : 'Show another thought'"
+          ></button>
+        </section>
+      </div>
     </aside>
   </div>
 </template>
@@ -370,6 +423,7 @@ onMounted(() => readUrl());
   gap: 20px;
 }
 .profile {
+  container: profile / inline-size;
   padding: 26px 24px;
   text-align: center;
 }
@@ -390,10 +444,10 @@ onMounted(() => readUrl());
   margin: 4px 0 16px;
 }
 .contacts {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 12px;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  justify-items: center;
+  gap: 8px;
   border-top: 1px solid var(--line);
   padding-top: 20px;
   margin-top: 20px;
@@ -407,12 +461,6 @@ onMounted(() => readUrl());
 }
 .contacts span {
   font-size: 20px;
-}
-.profile-note {
-  padding: 10px;
-  border-radius: 9px;
-  background: var(--accent-soft);
-  color: var(--accent);
 }
 .topic-tags {
   display: flex;
@@ -558,8 +606,7 @@ onMounted(() => readUrl());
   }
   .profile > .muted,
   .profile > .text-link,
-  .contacts,
-  .profile-note {
+  .contacts {
     grid-column: 1/-1;
   }
   .portfolio-grid {
@@ -820,5 +867,292 @@ onMounted(() => readUrl());
 .no-category-tags {
   font-size: 14px;
   margin: 16px 0 0;
+}
+</style>
+
+<style scoped>
+.post-kicker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+.starred-post {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--gold);
+  background: var(--gold-soft);
+  border-radius: 6px;
+  padding: 3px 7px;
+  font-size: 12px;
+}
+</style>
+
+<style scoped>
+.avatar-link {
+  display: block;
+  width: 88px;
+  margin: 20px auto 12px;
+  border-radius: 26px;
+}
+.avatar-link img {
+  margin: 0;
+  transition: transform 0.3s ease;
+}
+.avatar-link:hover img,
+.avatar-link:focus-visible img {
+  transform: rotate(-5deg) scale(1.05);
+}
+.portrait-link {
+  display: block;
+  overflow: hidden;
+}
+.portrait-link img {
+  transition:
+    transform 0.5s cubic-bezier(0.2, 0.7, 0.2, 1),
+    filter 0.5s;
+}
+.portrait-link:hover img,
+.portrait-link:focus-visible img {
+  transform: scale(1.045) rotate(-1deg);
+  filter: brightness(1.04);
+}
+.quote-card {
+  position: relative;
+  padding-bottom: 24px;
+}
+.quote-content {
+  min-height: 150px;
+}
+.quote-trigger {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  border: 0;
+  border-radius: 18px;
+  background: transparent;
+  color: var(--muted);
+  text-align: left;
+}
+.quote-enter-active,
+.quote-leave-active {
+  transition:
+    opacity 0.18s ease,
+    transform 0.18s ease;
+}
+.quote-enter-from {
+  opacity: 0;
+  transform: translateY(7px);
+}
+.quote-leave-to {
+  opacity: 0;
+  transform: translateY(-7px);
+}
+@media (max-width: 760px) {
+  .profile > .avatar-link {
+    grid-column: 1;
+    grid-row: 1/5;
+    width: 72px;
+    height: 72px;
+    margin: 0;
+    border-radius: 20px;
+  }
+  .quote-card {
+    padding-bottom: 18px;
+  }
+  .quote-content {
+    min-height: 140px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .avatar-link img,
+  .portrait-link img,
+  .quote-enter-active,
+  .quote-leave-active {
+    transition: none;
+  }
+  .avatar-link:hover img,
+  .avatar-link:focus-visible img,
+  .portrait-link:hover img,
+  .portrait-link:focus-visible img {
+    transform: none;
+  }
+}
+</style>
+
+<style scoped>
+.contacts {
+  gap: 8px;
+}
+.contacts a {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  background: var(--accent-soft);
+  border: 1px solid transparent;
+  border-radius: 12px;
+  transition:
+    transform 0.28s cubic-bezier(0.2, 0.8, 0.3, 1.4),
+    box-shadow 0.28s,
+    border-color 0.28s;
+}
+.contacts a:hover,
+.contacts a:focus-visible {
+  transform: translateY(-5px) rotate(-6deg);
+  border-color: var(--accent);
+  box-shadow: 0 7px 16px color-mix(in srgb, var(--accent) 18%, transparent);
+}
+.contacts a span {
+  transition: transform 0.28s;
+}
+.contacts a:hover span,
+.contacts a:focus-visible span {
+  transform: scale(1.15) rotate(6deg);
+}
+.contacts a:active {
+  transform: translateY(-1px) scale(0.92);
+}
+.quote-card {
+  overflow: hidden;
+  isolation: isolate;
+  transition:
+    transform 0.35s ease,
+    box-shadow 0.35s ease;
+}
+.quote-shell:hover .quote-card,
+.quote-card:has(.quote-trigger:focus-visible) {
+  transform: translateY(-4px) rotate(-3deg);
+  box-shadow: var(--shadow);
+}
+.quote-mark {
+  display: inline-block;
+  transform-origin: bottom left;
+  animation: quote-mark-pop 0.65s cubic-bezier(0.2, 0.8, 0.3, 1.3) both;
+}
+.quote-sparks {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  display: flex;
+  align-items: start;
+  gap: 5px;
+  color: var(--gold);
+  pointer-events: none;
+}
+.quote-sparks span {
+  display: block;
+  animation: quote-spark 0.8s cubic-bezier(0.2, 0.8, 0.3, 1.3) both;
+}
+.quote-sparks span:last-child {
+  margin-top: 15px;
+  font-size: 12px;
+  animation-delay: 0.08s;
+}
+.quote-ripple {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(
+    circle at 85% 15%,
+    color-mix(in srgb, var(--gold) 25%, transparent),
+    transparent 70%
+  );
+  animation: quote-ripple 0.9s ease-out both;
+}
+.quote-enter-active {
+  transition:
+    opacity 0.42s ease,
+    transform 0.42s cubic-bezier(0.2, 0.8, 0.3, 1.2),
+    filter 0.42s;
+}
+.quote-leave-active {
+  transition:
+    opacity 0.22s ease,
+    transform 0.22s ease,
+    filter 0.22s;
+}
+.quote-enter-from {
+  opacity: 0;
+  transform: translateY(22px) rotate(3deg) scale(0.94);
+  filter: blur(5px);
+}
+.quote-leave-to {
+  opacity: 0;
+  transform: translateY(-15px) rotate(-3deg) scale(0.97);
+  filter: blur(4px);
+}
+@keyframes quote-mark-pop {
+  from {
+    opacity: 0;
+    transform: rotate(-20deg) scale(0.65);
+  }
+  to {
+    opacity: 1;
+    transform: rotate(0) scale(1);
+  }
+}
+@keyframes quote-spark {
+  from {
+    opacity: 0;
+    transform: rotate(-90deg) scale(0.2);
+  }
+  65% {
+    opacity: 1;
+    transform: rotate(15deg) scale(1.3);
+  }
+  to {
+    opacity: 0.7;
+    transform: rotate(0) scale(1);
+  }
+}
+@keyframes quote-ripple {
+  from {
+    opacity: 1;
+    transform: scale(0.7);
+  }
+  to {
+    opacity: 0;
+    transform: scale(1.4);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .contacts a,
+  .contacts a span,
+  .quote-card,
+  .quote-enter-active,
+  .quote-leave-active {
+    transition: none;
+  }
+  .contacts a:hover,
+  .contacts a:focus-visible,
+  .contacts a:active,
+  .contacts a:hover span,
+  .contacts a:focus-visible span,
+  .quote-shell:hover .quote-card,
+  .quote-card:has(.quote-trigger:focus-visible) {
+    transform: none;
+  }
+  .quote-mark,
+  .quote-sparks span,
+  .quote-ripple {
+    animation: none;
+  }
+  .quote-enter-from,
+  .quote-leave-to {
+    transform: none;
+    filter: none;
+  }
+}
+</style>
+
+<style scoped>
+@container profile (max-width: 175px) {
+  .contacts {
+    grid-template-columns: repeat(2, 38px);
+    justify-content: center;
+  }
 }
 </style>

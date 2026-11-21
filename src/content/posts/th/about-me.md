@@ -6,7 +6,16 @@ lang: th
 category: personal
 cover: notes
 tags: ["Infrastructure/Networking"]
-featured: true
+featured: false
+media:
+  - type: image
+    src: /images/taj-portrait.png
+    alt: Portrait of Tajdang
+    caption: อีกมุมหนึ่งของผม
+  - type: image
+    src: /images/tajdang-avatar.png
+    alt: Tajdang’s illustrated avatar
+    caption: อวตารของผม
 ---
 
 ## สวัสดีครับ ผม Tajdang

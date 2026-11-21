@@ -28,6 +28,24 @@
       "label": "",
       "icon": "icon-[jam--github]",
       "url": "$author.github"
+    },
+    {
+      "name": "LinkedIn",
+      "label": "",
+      "icon": "icon-[lucide--linkedin]",
+      "url": "https://www.linkedin.com/in/taj-dangkomen-5319b03a3/"
+    },
+    {
+      "name": "Gmail",
+      "label": "",
+      "icon": "icon-[simple-icons--gmail]",
+      "url": "mailto:taj.dangkomen@gmail.com"
+    },
+    {
+      "name": "Instagram",
+      "label": "",
+      "icon": "icon-[lucide--instagram]",
+      "url": "https://www.instagram.com/t_tajdang/"
     }
   ],
   "text": {

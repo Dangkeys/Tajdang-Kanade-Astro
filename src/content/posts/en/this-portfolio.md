@@ -6,7 +6,7 @@ lang: en
 category: projects
 cover: astro
 tags: ["Frontend/Astro", "Frontend/Vue"]
-featured: false
+featured: true
 ---
 
 ## The starting point

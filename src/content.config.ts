@@ -6,6 +6,7 @@ import {
   coverNames,
   normalizeCategory,
 } from "./data/post-options";
+import { postMediaSchema } from "./lib/media";
 import { languages } from "./i18n";
 
 const posts = defineCollection({
@@ -36,6 +37,7 @@ const posts = defineCollection({
         ),
     ),
     cover: z.enum(coverNames),
+    media: z.array(postMediaSchema).default([]),
     featured: z.boolean().default(false),
     draft: z.boolean().default(false),
   }),

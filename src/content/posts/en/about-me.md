@@ -6,7 +6,16 @@ lang: en
 category: personal
 cover: notes
 tags: ["Infrastructure/Networking"]
-featured: true
+featured: false
+media:
+  - type: image
+    src: /images/taj-portrait.png
+    alt: Portrait of Tajdang
+    caption: A face behind the code.
+  - type: image
+    src: /images/tajdang-avatar.png
+    alt: Tajdang’s illustrated avatar
+    caption: My illustrated avatar.
 ---
 
 ## Hello, I’m Tajdang

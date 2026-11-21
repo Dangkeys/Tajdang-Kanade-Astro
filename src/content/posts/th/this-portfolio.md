@@ -6,7 +6,7 @@ lang: th
 category: projects
 cover: astro
 tags: ["Frontend/Astro", "Frontend/Vue"]
-featured: false
+featured: true
 ---
 
 ## จุดเริ่มต้น
