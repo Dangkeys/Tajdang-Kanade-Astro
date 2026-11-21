@@ -22,7 +22,7 @@ media:
 
 I’m Taj Dangkomen, a 4th yearComputer Engineering student at KMITL and a Presales Network Engineer.
 
-I’ve worked on backend and mobile apps: [Advisory](../advisory/), [HoraHub](../horahub/), [Essentia and PetNMed](../freelance-work/). I also make games with Unity and helped run game-development sessions at [SAIG](../saig/).
+I’ve worked on backend and mobile apps: [Advisory](../advisory/), HoraHub, Essentia and PetNMed. I also make games with Unity and helped run game-development sessions at [SAIG](../saig/).
 
 ## Outside work
 

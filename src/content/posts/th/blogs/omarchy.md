@@ -5,6 +5,7 @@ date: 2026-11-21
 lang: th
 category: blogs
 cover: notes
+coverImage: /images/omarchy.svg
 tags: ["Linux/Omarchy", "Linux/Hyprland"]
 featured: true
 draft: true

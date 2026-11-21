@@ -7,6 +7,7 @@ category: "work-experience"
 cover: "git"
 tags: ["Backend/Go", "Backend/MongoDB", "Infrastructure/Docker", "Mobile/Flutter", "Mobile/Firebase"]
 featured: false
+draft: true
 ---
 
 ## Essentia · January–March 2025

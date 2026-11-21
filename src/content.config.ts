@@ -37,6 +37,11 @@ const posts = defineCollection({
         ),
     ),
     cover: z.enum(coverNames),
+    coverImage: z
+      .string()
+      .trim()
+      .regex(/^(\/(?!\/)|https?:\/\/)/, "Use a /local/path or an HTTP(S) URL")
+      .optional(),
     media: z.array(postMediaSchema).default([]),
     featured: z.boolean().default(false),
     draft: z.boolean().default(false),

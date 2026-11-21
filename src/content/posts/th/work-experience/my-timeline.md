@@ -19,13 +19,13 @@ featured: true
 
 ทำแอปมือถือแบบฟรีแลนซ์ด้วย Flutter และ Riverpod มีระบบติดตามการกินยาและแจ้งเตือน
 
-[PetNMed และ Essentia](../freelance-work/)
+PetNMed และ Essentia
 
 ## มกราคมถึงมีนาคม 2025: Essentia
 
 ทำ Backend แบบฟรีแลนซ์ด้วย Go และ MongoDB เชื่อม API ของระบบ AI และใช้ Docker
 
-[PetNMed และ Essentia](../freelance-work/)
+PetNMed และ Essentia
 
 ## พฤษภาคมถึงมิถุนายน 2025: ฝึกงาน Advisory
 
@@ -37,4 +37,4 @@ featured: true
 
 เริ่มทำ Backend ของ HoraHub ด้วย NestJS, PostgreSQL และ Socket.io
 
-[HoraHub](../horahub/)
+HoraHub

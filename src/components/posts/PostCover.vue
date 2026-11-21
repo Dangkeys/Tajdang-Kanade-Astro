@@ -13,7 +13,11 @@ const icons: Record<string, string> = {
 </script>
 
 <template>
-  <div class="post-cover" aria-hidden="true">
+  <div
+    class="post-cover"
+    :class="{ 'logo-cover': image?.split(/[?#]/)[0]?.endsWith('.svg') }"
+    aria-hidden="true"
+  >
     <img v-if="image" :src="image" alt="" loading="lazy" decoding="async" />
     <span
       v-else
@@ -44,5 +48,12 @@ const icons: Record<string, string> = {
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+.logo-cover {
+  background: #fff;
+}
+.logo-cover img {
+  object-fit: contain;
+  padding: 16px;
 }
 </style>

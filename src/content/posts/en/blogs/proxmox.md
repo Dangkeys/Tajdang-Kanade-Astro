@@ -5,6 +5,7 @@ date: 2026-11-21
 lang: en
 category: blogs
 cover: notes
+coverImage: /images/proxmox.svg
 tags: ["Infrastructure/Virtualization/Proxmox", "Infrastructure/Containers/LXC"]
 featured: true
 draft: true

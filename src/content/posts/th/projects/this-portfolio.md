@@ -7,6 +7,7 @@ category: projects
 cover: astro
 tags: ["Frontend/Astro", "Frontend/Vue"]
 featured: true
+draft: true
 ---
 
 ## เว็บไซต์นี้

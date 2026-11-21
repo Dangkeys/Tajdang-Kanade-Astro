@@ -19,13 +19,13 @@ I joined SAIG and became a Game Session Leader, helping coordinate sessions and 
 
 Freelance mobile development with Flutter and Riverpod, including medication tracking and push notifications.
 
-[PetNMed and Essentia](../freelance-work/)
+PetNMed and Essentia
 
 ## January to March 2025: Essentia
 
 Freelance backend development with Go, MongoDB, an external AI API, and Docker.
 
-[PetNMed and Essentia](../freelance-work/)
+PetNMed and Essentia
 
 ## May to June 2025: Advisory internship
 
@@ -37,4 +37,4 @@ I worked on an Expo / React Native consultation app during my internship associa
 
 I started backend work on HoraHub with NestJS, PostgreSQL, and Socket.io.
 
-[HoraHub](../horahub/)
+HoraHub
