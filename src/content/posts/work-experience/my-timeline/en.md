@@ -32,5 +32,3 @@ BKBIET internship
 I started backend work on HoraHub with NestJS, PostgreSQL, and Socket.io.
 
 HoraHub
-
-*Cover diagram: [Pro Git, Scott Chacon and Ben Straub](https://git-scm.com/book/en/v2/Git-Branching-Branches-in-a-Nutshell), [CC BY-NC-SA 3.0](https://creativecommons.org/licenses/by-nc-sa/3.0/).*

@@ -9,6 +9,6 @@
   "cover": "notes",
   "featured": true,
   "slug": "my-timeline",
-  "coverImage": "/images/git-timeline.png",
+  "coverImage": "/images/git-timeline-branch.svg",
   "coverFit": "contain"
 }

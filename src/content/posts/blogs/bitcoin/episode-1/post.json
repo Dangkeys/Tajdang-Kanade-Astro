@@ -15,7 +15,6 @@
   "coverImage": "/images/bitcoin-standard.jpg",
   "coverFit": "contain",
   "series": {
-    "name": "Bitcoin",
     "episode": 1
   }
 }

@@ -11,6 +11,18 @@ const source = z
   .trim()
   .regex(/^(\/(?!\/)|https?:\/\/)/, "Use a /local/path or an HTTP(S) URL");
 const mediaId = z.string().trim().min(1);
+const seriesSchema = z
+  .object({
+    id: z.string().trim().min(1),
+    name: z
+      .object({
+        en: z.string().trim().min(1),
+        th: z.string().trim().min(1),
+      })
+      .strict(),
+    episode: z.number().int().positive(),
+  })
+  .strict();
 const sharedMediaSchema = z.discriminatedUnion("type", [
   z.object({ id: mediaId, type: z.literal("image"), src: source }).strict(),
   z
@@ -52,13 +64,7 @@ const sharedPostSchema = z
     cover: z.enum(coverNames),
     coverImage: source.optional(),
     coverFit: z.enum(["cover", "contain"]).default("cover"),
-    series: z
-      .object({
-        name: z.string().trim().min(1),
-        episode: z.number().int().positive(),
-      })
-      .strict()
-      .optional(),
+    series: seriesSchema.pick({ episode: true }).optional(),
     featured: z.boolean().default(false),
     draft: z.boolean().default(false),
     media: z.array(sharedMediaSchema).default([]),
@@ -89,13 +95,16 @@ const localizedPostSchema = z
   })
   .strict();
 
-export const postSchema = sharedPostSchema.omit({ media: true }).extend({
-  lang: z.enum(["en", "th"]),
-  title: translatedText,
-  description: translatedText,
-  media: z.array(postMediaSchema),
-  links: z.array(postLinkSchema).default([]),
-});
+export const postSchema = sharedPostSchema
+  .omit({ media: true, series: true })
+  .extend({
+    series: seriesSchema.optional(),
+    lang: z.enum(["en", "th"]),
+    title: translatedText,
+    description: translatedText,
+    media: z.array(postMediaSchema),
+    links: z.array(postLinkSchema).default([]),
+  });
 
 export function readPost(file: string) {
   const lang = z.enum(["en", "th"]).parse(basename(file, ".md"));
@@ -106,9 +115,22 @@ export function readPost(file: string) {
   const contents = readFileSync(file, "utf8");
   const parsed = parseFrontmatter(contents);
   const { mediaText, ...text } = localizedPostSchema.parse(parsed.frontmatter);
+  const series = shared.series
+    ? {
+        ...seriesSchema
+          .omit({ episode: true })
+          .parse(
+            JSON.parse(
+              readFileSync(join(dirname(file), "..", "series.json"), "utf8"),
+            ),
+          ),
+        ...shared.series,
+      }
+    : undefined;
   const data = {
     ...shared,
     ...text,
+    series,
     lang,
     media: shared.media.map(({ id, ...asset }) => ({
       ...asset,

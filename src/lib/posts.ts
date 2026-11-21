@@ -15,7 +15,7 @@ export type PostSummary = {
   cover: string;
   coverImage?: string;
   coverFit?: "cover" | "contain";
-  series?: { name: string; episode: number };
+  series?: NonNullable<CollectionEntry<"posts">["data"]["series"]>;
   featured: boolean;
   minutes: number;
 };

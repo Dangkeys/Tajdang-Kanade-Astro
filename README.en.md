@@ -131,7 +131,7 @@ Edit `post.json` once for both languages:
 
 The `slug` controls both URLs: `/posts/my-post/` and `/th/posts/my-post/`. Moving the folder or changing the category does not change these URLs. Keep slugs unique across categories.
 
-For a series, add `"series": { "name": "Bitcoin", "episode": 1 }` to `post.json`. Use the same name and the next episode number for later posts. The homepage groups matching episodes into one series card. Its title opens the first matching episode. The homepage does not list or count episodes; readers open the series to see them. Published episodes appear automatically in the left sidebar, in episode order, for the current language. Smaller screens use a collapsible episode menu.
+For a series, keep episode folders together, for example `blogs/bitcoin/episode-1/`. In `blogs/bitcoin/series.json`, store `{"id": "bitcoin", "name": {"en": "Money & Bitcoin", "th": "เงินกับบิตคอยน์"}}`. Each episode’s `post.json` needs only `"series": {"episode": 1}`. Use the next episode number for later posts. Edit series names once in `series.json`. The homepage groups matching episodes into one series card without listing or counting episodes. Its title opens the first matching episode. Published episodes appear automatically in the left sidebar, in episode order, for the current language. Smaller screens use a collapsible episode menu.
 
 Set `"coverFit": "contain"` to show a complete book cover or diagram without cropping it.
 

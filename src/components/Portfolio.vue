@@ -76,12 +76,12 @@ const filtered = computed(() =>
         (tagMatch.value === "all"
           ? selectedTags.value.every((tag) => matchesTag(post.tags, tag))
           : selectedTags.value.some((tag) => matchesTag(post.tags, tag)))) &&
-      `${post.title} ${post.description} ${post.tags.join(" ")}`
+      `${post.title} ${post.description} ${post.series?.name[props.lang] ?? ""} ${post.tags.join(" ")}`
         .toLowerCase()
         .includes(query.value.trim().toLowerCase()),
   ),
 );
-const feedEntries = computed(() => groupSeries(filtered.value));
+const feedEntries = computed(() => groupSeries(filtered.value, props.lang));
 const pageCount = computed(() =>
   Math.max(1, Math.ceil(feedEntries.value.length / pageSize)),
 );
@@ -116,7 +116,7 @@ const suggestions = computed<Suggestion[]>(() => {
   const needle = query.value.trim().toLowerCase();
   const posts: Suggestion[] = categoryPosts.value
     .filter((post) =>
-      `${post.title} ${post.description} ${post.tags.join(" ")}`
+      `${post.title} ${post.description} ${post.series?.name[props.lang] ?? ""} ${post.tags.join(" ")}`
         .toLowerCase()
         .includes(needle),
     )

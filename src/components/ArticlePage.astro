@@ -26,7 +26,7 @@ const seriesItems = series
         (entry) =>
           !entry.data.draft &&
           entry.data.lang === lang &&
-          entry.data.series?.name === series.name,
+          entry.data.series?.id === series.id,
       )
       .sort(
         (a, b) => (a.data.series?.episode ?? 0) - (b.data.series?.episode ?? 0),
@@ -65,17 +65,18 @@ const media = await Promise.all(
       <>
         <aside class="card series-sidebar">
           <SeriesNavigation
-            name={series.name}
+            name={series.name[lang]}
             lang={lang}
             items={seriesItems}
           />
         </aside>
         <details class="card series-mobile">
           <summary>
-            {series.name} · {lang === "th" ? "ตอนทั้งหมด" : "All episodes"}
+            {series.name[lang]} ·{" "}
+            {lang === "th" ? "ตอนทั้งหมด" : "All episodes"}
           </summary>
           <SeriesNavigation
-            name={series.name}
+            name={series.name[lang]}
             lang={lang}
             items={seriesItems}
           />

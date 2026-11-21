@@ -73,7 +73,7 @@ export function sharedPostLoader(): Loader {
           isAbsolute(entry) ||
           entry === ".." ||
           entry.startsWith(`..${sep}`) ||
-          !/(?:^|[/\\])(?:post\.json|en\.md|th\.md)$/.test(entry)
+          !/(?:^|[/\\])(?:post\.json|series\.json|en\.md|th\.md)$/.test(entry)
         )
           return;
         pending = pending.then(sync).catch((error) => {
